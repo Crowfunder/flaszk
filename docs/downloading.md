@@ -1,20 +1,86 @@
+Dzięki! Masz rację — wcześniejszy pseudoformat Medusa nie był zgodny z Mermaid. Poniżej poprawiam i przedstawiam **działające diagramy w formacie [Mermaid.js](https://mermaid.js.org/)** zgodnie z Twoją dokumentacją.
+
+---
+
+## Local Fetch – `LocalFetch`
 
 ```mermaid
-start=>start: [H] Select document to fetch
-check_local=>condition: [H] Is document available locally?
-read_path=>operation: [H] Read LocalFilePath
-check_file=>condition: [H] Does file exist?
-return_local=>operation: [H] Return file to requesting client
-check_remotes=>condition: [H] Are there any Remotes available?
-start_remote=>operation: [H] Start Remote Fetch
-fail_index=>operation: [H] Return error, initiate indexing
-end=>end
+flowchart TD
+    A[[Start: Select document to fetch]]
+    B{Is document available locally?}
+    C[Read LocalFilePath]
+    D{Does file exist?}
+    E[Return file to requesting client]
+    F{Are there any Remotes available?}
+    G[Start Remote Fetch]
+    H[Return error, initiate indexing]
+    Z[[End]]
 
-start->check_local
-check_local(yes)->read_path->check_file
-check_file(yes)->return_local->end
-check_file(no)->check_remotes
-check_local(no)->check_remotes
-check_remotes(yes)->start_remote->end
-check_remotes(no)->fail_index->end
+    A --> B
+    B -- Yes --> C --> D
+    D -- Yes --> E --> Z
+    D -- No --> F
+    B -- No --> F
+    F -- Yes --> G --> Z
+    F -- No --> H --> Z
 ```
+
+---
+
+## Remote Fetch – PeerOnly Network
+
+```mermaid
+flowchart TD
+    A[[Start: Iterate over Document.Remotes]]
+    B[Send fetch request with Secret & FileHash]
+    C[On Remote: Find document by FileHash in Index]
+    D{Is document available locally on Remote?}
+    E[Remote returns document to Host]
+    F[Remote returns 404 to Host]
+    G{Did Host receive document?}
+    H[Verify checksum, return to requester]
+    I{More Remotes to try?}
+    J[Try next Remote]
+    K[Return 404: Document not found]
+
+    A --> B --> C --> D
+    D -- Yes --> E --> G
+    D -- No --> F --> G
+    G -- Yes --> H
+    G -- No --> I
+    I -- Yes --> J --> B
+    I -- No --> K
+```
+
+## Remote Fetch – Public Network
+```mermaid
+flowchart TD
+    A[[Start: Iterate over Document.Remotes]]
+    B[Send fetch request with Secret & FileHash]
+    C[On Remote: Find document by FileHash]
+    D{Is file available locally on Remote?}
+    E[Perform Local Fetch on Remote]
+    F[Start Recursive Remote Fetch]
+    G[If received: buffer, verify checksum, return to Host]
+    H[Host verifies checksum, return to original requester]
+    I{More Remotes to try?}
+    J[Try next Remote]
+    K[Return 404 file not found]
+
+    A --> B --> C --> D
+    D -- Yes --> E --> G --> H 
+    D -- No --> F --> A
+    G --> H 
+    B --> I
+    I -- Yes --> J --> B
+    I -- No --> K 
+
+
+```
+
+---
+
+## Notes
+
+* **TTL (Time To Live)**/**Hops** should be part of the download request. If it goes over the limit, return 404.
+* If **Remote is inaccessible** (timeout), skip it and try another. Return `404` only when all available remotes are used up.
