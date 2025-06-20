@@ -2,10 +2,8 @@ import os
 import sys
 from flask import Flask, render_template, request
 from werkzeug.debug import DebuggedApplication
-from flask_sqlalchemy import SQLAlchemy
+from models import db
 
-
-db = SQLAlchemy()
 
 # Flask quickstart:
 # https://flask.palletsprojects.com/en/3.0.x/quickstart/
@@ -49,8 +47,13 @@ def create_app():
 
 
     # https://flask-sqlalchemy.palletsprojects.com/en/3.1.x/quickstart/#configure-the-extension
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.sqlite"
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.getcwd()}/app/instance/database.sqlite"
     db.init_app(app)
+
+    with app.app_context():
+        db.create_all()
+
+
 
     # Setup custom "Not found" page
     # https://flask.palletsprojects.com/en/3.0.x/errorhandling/#custom-error-pages

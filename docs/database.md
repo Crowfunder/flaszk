@@ -2,7 +2,7 @@
 
 ## Tables Overview
 
-* **Index** – Book index
+* **Documents** – Documents index
 * **Remotes** – Paired servers
 * **Metadata** – Book metadata
 
@@ -10,7 +10,7 @@
 
 ## Models
 
-### 📄 Document (in `Index` table)
+### Document (in `Documents` table)
 
 | Field           | Type           | Description                                       |
 | --------------- | -------------- | ------------------------------------------------- |
@@ -23,7 +23,7 @@
 
 ---
 
-### 🌐 Remote (in `Remotes` table)
+### Remote (in `Remotes` table)
 
 | Field     | Type      | Description                     |
 | --------- | --------- | ------------------------------- |
@@ -35,7 +35,7 @@
 
 ---
 
-### 🧾 Metadata (in `Metadata` table)
+### DocumentMetadata (in `DocumentsMetadata` table)
 
 > **TBD** – Structure to be defined
 
