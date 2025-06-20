@@ -1,6 +1,4 @@
-Dzięki! Masz rację — wcześniejszy pseudoformat Medusa nie był zgodny z Mermaid. Poniżej poprawiam i przedstawiam **działające diagramy w formacie [Mermaid.js](https://mermaid.js.org/)** zgodnie z Twoją dokumentacją.
-
----
+# Download Algorithm
 
 ## Local Fetch – `LocalFetch`
 
