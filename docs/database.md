@@ -10,33 +10,54 @@
 
 ## Models
 
-### Document (in `Documents` table)
+### Document (in `documents` table)
 
-| Field           | Type           | Description                                       |
-| --------------- | -------------- | ------------------------------------------------- |
-| `LocalId`       | `Int`          | Local identifier of the document                  |
-| `FileHash`      | `String?`      | Optional hash of the file                         |
-| `LocalFilePath` | `String?`      | Optional path to the local file, if applicable                   |
-| `isLocal`       | `Bool`         | Indicates whether the document is available locally  |
-| `Metadata`      | → Foreign Key  | Reference to associated metadata                  |
-| `Remotes`       | `List<Remote>` | Back-propagated list of associated remote servers |
+| Field                  | Type                                 | Description                                                             |
+| ---------------------- | ------------------------------------ | ----------------------------------------------------------------------- |
+| `local_Id`             | `Integer`                            | Primary key. Unique local ID of the document.                           |
+| `file_hash`            | `String`                             | Hash of the file used for identification (e.g., SHA-256).      |
+| `local_file_path`      | `String?`                             | Optional local file path if the file is available locally.             |
+| `is_local`             | `Boolean`                            | Indicates whether the file is stored locally (`True`) or only mirrored. |
+| `document_metadata_id` | `Integer`                            | Foreign key to `documents_metadata.Id`, links to associated metadata.   |
+| `mirrors`              | `Relationship[List[DocumentMirror]]` | All remote mirrors storing this document.                               |
 
----
-
-### Remote (in `Remotes` table)
-
-| Field     | Type      | Description                     |
-| --------- | --------- | ------------------------------- |
-| `Id`      | `Int`     | Unique identifier of the remote |
-| `Address` | `String`  | Server address                  |
-| `Port`    | `Int`     | Communication port              |
-| `Secret`  | `String`  | Authentication secret           |
-| `Name`    | `String?` | Optional name of the server     |
 
 ---
 
-### DocumentMetadata (in `DocumentsMetadata` table)
+### Remote (in `remotes` table)
 
+| Field     | Type                                 | Description                                            |
+| --------- | ------------------------------------ | ------------------------------------------------------ |
+| `Id`      | `Integer`                            | Primary key. Unique ID of the remote.                  |
+| `address` | `String`                             | Host or IP address of the remote server.               |
+| `port`    | `Integer`                            | Network port used by the remote server.                |
+| `secret`  | `String`                             | Secret token used for authentication with remote. |
+| `name`    | `String?`                            | Optional human-readable name for the remote server.    |
+| `mirrors` | `Relationship[List[DocumentMirror]]` | Documents mirrors on this remote server.              |
+
+
+---
+
+### DocumentMirror (in `documents_mirrors` table)
+| Field         | Type                     | Description                                                                    |
+| ------------- | ------------------------ | ------------------------------------------------------------------------------ |
+| `Id`          | `Integer`                | Primary key. Unique ID of the mirror entry.                                    |
+| `document_Id` | `Integer`                | Foreign key to `documents.local_Id`. Links to the mirrored document.           |
+| `remote_Id`   | `Integer`                | Foreign key to `remotes.Id`. Links to the remote where the document is hosted. |
+| `document`    | `Relationship[Document]` | Linked document entity.                                                        |
+| `remote`      | `Relationship[Remote]`   | Linked remote entity.                                                          |
+
+---
+
+### DocumentMetadata (in `documents_metadata` table)
 > **TBD** – Structure to be defined
+
+| Field         | Type                     | Description                                                        |
+| ------------- | ------------------------ | ------------------------------------------------------------------ |
+| `Id`          | `Integer`                | Primary key. Unique metadata entry ID.                             |
+| `document_Id` | `Integer`                | Foreign key to `documents.local_Id`. Links metadata to a document. |
+| `document`    | `Relationship[Document]` | Relationship to the associated `Document`.                         |
+
+---
 
 
