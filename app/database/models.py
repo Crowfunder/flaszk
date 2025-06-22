@@ -17,14 +17,16 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 db = SQLAlchemy()
+from dataclasses import dataclass
 
+@dataclass
 class DocumentMetadata(db.Model):
     __tablename__ = 'documents_metadata'
 
     Id = db.Column(db.Integer, primary_key=True)
     document_Id = db.Column(db.Integer, db.ForeignKey('documents.local_Id', ondelete='CASCADE'), nullable=False)
 
-
+@dataclass
 class Document(db.Model):
     __tablename__ = 'documents'
 
@@ -35,7 +37,7 @@ class Document(db.Model):
     document_metadata = db.relationship('DocumentMetadata', cascade='all, delete', backref=db.backref('documents', lazy=True))
     mirrors = db.relationship('DocumentMirror', cascade='all, delete', backref='documents', lazy=True)
 
-
+@dataclass
 class DocumentMirror(db.Model):
     __tablename__ = 'documents_mirrors'
 
@@ -43,7 +45,7 @@ class DocumentMirror(db.Model):
     document_Id = db.Column(db.Integer, db.ForeignKey('documents.local_Id', ondelete='CASCADE'), nullable=False)
     remote_Id = db.Column(db.Integer, db.ForeignKey('remotes.Id', ondelete='CASCADE'), nullable=False)
 
-
+@dataclass
 class Remote(db.Model):
     __tablename__ = 'remotes'
 

@@ -5,17 +5,22 @@ import datetime
 
 
 from ..app import db
-from ..database.models import *
-from ..database.tests import *
+from app.database.models import Remote, Document, DocumentMetadata, DocumentMirror
+from ..database.tests import db_test
+from ..database.schema.schemas import *
 
 bp = Blueprint('bp_test', __name__)
+
+
 
 @bp.route('/test/dbinit', methods=['GET'])
 def dbinit():
     db_test()
-    return 200
+    return "oke"
 
 @bp.route('/test/dumpdb', methods=['GET'])
 def dumpdb():
-    r = dump_documents()
+    r = Document.query.all()
+    r = DocumentSchema(many=True).dump(r)
     return r, 200
+

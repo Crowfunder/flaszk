@@ -1,4 +1,5 @@
-from app.database.models import *
+from app.database.models import Remote, Document, DocumentMetadata, DocumentMirror
+from app.app import db
 from flask import current_app
 from sqlalchemy import select
 
@@ -79,12 +80,3 @@ def db_test():
         r = db.session.scalars(q)
         for row in r.all():
             print(row)
-
-
-def dump_documents():
-    with current_app.app_context():
-        q = select(Document)
-        r = db.session.scalars(q)
-        # r = [i for i in r.all()]
-        # print(r)
-        return r
