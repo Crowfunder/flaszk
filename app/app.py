@@ -49,7 +49,7 @@ def create_app():
 
 
     # https://flask-sqlalchemy.palletsprojects.com/en/3.1.x/quickstart/#configure-the-extension
-    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.getcwd()}/app/instance/database.sqlite"
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.getcwd()}/instance/database.sqlite"
     db.init_app(app)
 
     with app.app_context():

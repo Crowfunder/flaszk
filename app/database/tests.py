@@ -1,8 +1,11 @@
 from app.database.models import *
+from flask import current_app
 from sqlalchemy import select
 
-def db_test(app):
+def db_test():
 
+
+    app = current_app
     #####################
     # TODO: remove
     # TESTING
@@ -49,28 +52,39 @@ def db_test(app):
             remote_Id=remote.Id
         )
 
-        mirror = DocumentMirror(
+        mirror1 = DocumentMirror(
             document_Id=document.local_Id,
             remote_Id=remote1.Id
         )
         db.session.add(mirror)
+        db.session.add(mirror1)
         db.session.commit()
 
         print("Example entries created!")
 
-        q = select(DocumentMirror).where(DocumentMirror.Id == 2)
-        r = db.session.execute(q)
+        q    = select(Document).where(Document.local_Id == 1)
+        r = db.session.scalars(q)
         for row in r.all():
             print(row)
+
 
         q = select(Remote).where(Remote.Id == 2)
-        r = db.session.execute(q)
+        r = db.session.scalars(q)
         for row in r.all():
             print(row)
-            print(row.Remote.Id)
-            db.session.delete(row.Remote)
+            print(row.mirrors)
+            db.session.delete(row)
 
         q = select(DocumentMirror).where(DocumentMirror.Id == 2)
-        r = db.session.execute(q)
+        r = db.session.scalars(q)
         for row in r.all():
             print(row)
+
+
+def dump_documents():
+    with current_app.app_context():
+        q = select(Document)
+        r = db.session.scalars(q)
+        # r = [i for i in r.all()]
+        # print(r)
+        return r

@@ -44,8 +44,6 @@
 | `Id`          | `Integer`                | Primary key. Unique ID of the mirror entry.                                    |
 | `document_Id` | `Integer`                | Foreign key to `documents.local_Id`. Links to the mirrored document.           |
 | `remote_Id`   | `Integer`                | Foreign key to `remotes.Id`. Links to the remote where the document is hosted. |
-| `document`    | `Relationship[Document]` | Linked document entity.                                                        |
-| `remote`      | `Relationship[Remote]`   | Linked remote entity.                                                          |
 
 ---
 
@@ -56,7 +54,6 @@
 | ------------- | ------------------------ | ------------------------------------------------------------------ |
 | `Id`          | `Integer`                | Primary key. Unique metadata entry ID.                             |
 | `document_Id` | `Integer`                | Foreign key to `documents.local_Id`. Links metadata to a document. |
-| `document`    | `Relationship[Document]` | Relationship to the associated `Document`.                         |
 
 ---
 
