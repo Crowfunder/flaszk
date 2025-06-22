@@ -22,7 +22,7 @@ class DocumentMetadata(db.Model):
     __tablename__ = 'documents_metadata'
 
     Id = db.Column(db.Integer, primary_key=True)
-    document_Id = db.Column(db.Integer, db.ForeignKey('documents.local_Id'), nullable=False)
+    document_Id = db.Column(db.Integer, db.ForeignKey('documents.local_Id', ondelete='CASCADE'), nullable=False)
 
 
 class Document(db.Model):
@@ -32,16 +32,16 @@ class Document(db.Model):
     file_hash = db.Column(db.String, nullable=True)
     local_file_path = db.Column(db.String, nullable=True)
     is_local = db.Column(db.Boolean, nullable=False, default=False)
-    document_metadata = db.relationship('DocumentMetadata', backref=db.backref('documents', lazy=True))
-    mirrors = db.relationship('DocumentMirror', backref='documents', lazy=True)
+    document_metadata = db.relationship('DocumentMetadata', cascade='all, delete', backref=db.backref('documents', lazy=True))
+    mirrors = db.relationship('DocumentMirror', cascade='all, delete', backref='documents', lazy=True)
 
 
 class DocumentMirror(db.Model):
     __tablename__ = 'documents_mirrors'
 
     Id = db.Column(db.Integer, primary_key=True)
-    document_Id = db.Column(db.Integer, db.ForeignKey('documents.local_Id'), nullable=False)
-    remote_Id = db.Column(db.Integer, db.ForeignKey('remotes.Id'), nullable=False)
+    document_Id = db.Column(db.Integer, db.ForeignKey('documents.local_Id', ondelete='CASCADE'), nullable=False)
+    remote_Id = db.Column(db.Integer, db.ForeignKey('remotes.Id', ondelete='CASCADE'), nullable=False)
 
 
 class Remote(db.Model):
@@ -52,6 +52,6 @@ class Remote(db.Model):
     port = db.Column(db.Integer, nullable=False)
     secret = db.Column(db.String, nullable=False)
     name = db.Column(db.String, nullable=True)
-    mirrors = db.relationship('DocumentMirror', backref='remotes', lazy=True)
+    mirrors = db.relationship('DocumentMirror', cascade='all, delete', backref='remotes', lazy=True)
 
 
