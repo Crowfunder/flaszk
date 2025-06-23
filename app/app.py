@@ -67,8 +67,6 @@ def create_app():
 
     # Register blueprints (views)
     # https://flask.palletsprojects.com/en/3.0.x/blueprints/
-    # from .views.index import bp as bp_index
-    # app.register_blueprint(bp_index)
 
     from .components.testing.testController import bp as bp_test
     app.register_blueprint(bp_test)
@@ -78,6 +76,12 @@ def create_app():
 
     from .components.utils.utilController import bp as bp_util
     app.register_blueprint(bp_util)
+
+    from .components.download.downloadController import bp as bp_download
+    app.register_blueprint(bp_download)
+
+    from .components.pairing.pairingController import bp as bp_pairing
+    app.register_blueprint(bp_pairing)
 
     return app
 

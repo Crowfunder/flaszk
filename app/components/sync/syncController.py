@@ -29,5 +29,5 @@ def serverSyncAll():
     secret = getRequestSecret()
     if authenticateRemote(remote_ip, secret):
         return exportLocalDocuments(), 200
-    
+    return 'unknown remote', 403
     
