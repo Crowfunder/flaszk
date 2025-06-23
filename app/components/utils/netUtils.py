@@ -1,7 +1,9 @@
-from flask import request
+from flask import request, jsonify
 import requests
 
-from .utilController import SERVER_PING_ENDPOINT, SERVER_PING_BUSY
+from netConfig import SERVER_PING_BUSY, SERVER_PING_ENDPOINT, SERVER_PING_OK, SECRET_HEADER
+
+
 
 def getRequestIP():
     '''
@@ -26,3 +28,12 @@ def checkIfHostUp(ip_addr, port):
         return True
     except requests.exceptions.RequestException:
         return False
+    
+
+def requestGetWithSecret(url, secret):
+    headers = {
+        SECRET_HEADER : secret
+    }
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    return jsonify(response.json())

@@ -52,8 +52,9 @@ def create_app():
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.getcwd()}/instance/database.sqlite"
     db.init_app(app)
 
-    with app.app_context():
-        db.create_all()
+    # Comment out for double-hosted tests
+    # with app.app_context():
+    #     db.create_all()
 
 
 
@@ -71,6 +72,12 @@ def create_app():
 
     from .components.testing.testController import bp as bp_test
     app.register_blueprint(bp_test)
+
+    from .components.sync.syncController import bp as bp_sync
+    app.register_blueprint(bp_sync)
+
+    from .components.utils.utilController import bp as bp_util
+    app.register_blueprint(bp_util)
 
     return app
 

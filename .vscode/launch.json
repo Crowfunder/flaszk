@@ -21,6 +21,51 @@
             ],
             "jinja": true,
             "autoStartBrowser": false
+        },
+        {
+            "name": "Flask (Debug, port 5000)",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "flask",
+            "env": {
+                "FLASK_APP": "app/app.py",
+                "FLASK_DEBUG": "1"
+            },
+            "args": [
+                "run",
+                "--no-debugger",
+                "--no-reload",
+                "--port=5000"
+            ],
+            "jinja": true,
+            "autoStartBrowser": false
+        },
+        {
+            "name": "Flask (Background, port 5001)",
+            "type": "python",
+            "request": "launch",
+            "module": "flask",
+            "env": {
+                "FLASK_APP": "app/app.py",
+                "FLASK_DEBUG": "0"
+            },
+            "args": [
+                "run",
+                "--no-debugger",
+                "--no-reload",
+                "--port=5001"
+            ],
+            "jinja": true,
+            "autoStartBrowser": false
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Flask: Debug + Background",
+            "configurations": [
+                "Flask (Debug, port 5000)",
+                "Flask (Background, port 5001)"
+            ]
         }
     ]
 }

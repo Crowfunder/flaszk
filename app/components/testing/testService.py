@@ -1,7 +1,10 @@
-from app.database.models import Remote, Document
+from app.database.models import Remote, Document, DocumentMetadata, DocumentMirror
 from app.app import db
 from flask import current_app
 from sqlalchemy import select
+
+from random import random
+from hashlib import sha256
 
 def db_test():
 
@@ -14,26 +17,26 @@ def db_test():
     # Create a remote server
     with app.app_context():
         remote = Remote(
-            address="192.168.1.100",
-            port=8080,
+            address="127.0.0.1",
+            port=5001,
             secret="supersecret123",
-            name="BackupNode1"
+            name="BackgroundNode"
         )
         db.session.add(remote)
         db.session.commit()
-        remote1 = Remote(
-            address="192.168.1.113",
-            port=8080,
-            secret="superseawqwe3",
-            name="SAMANGo"
-        )
-        db.session.add(remote1)
-        db.session.commit()
+        # remote1 = Remote(
+        #     address="192.168.1.113",
+        #     port=8080,
+        #     secret="supersecret123",
+        #     name="SAMANGo"
+        # )
+        # db.session.add(remote1)
+        # db.session.commit()
 
 
         # Create a document
         document = Document(
-            file_hash="abc123def456",
+            file_hash=str(sha256(str(random()).encode())),
             local_file_path="/var/data/doc1.txt",
             is_local=True,
         )
@@ -53,31 +56,31 @@ def db_test():
             remote_Id=remote.Id
         )
 
-        mirror1 = DocumentMirror(
-            document_hash=document.file_hash,
-            remote_Id=remote1.Id
-        )
+        # mirror1 = DocumentMirror(
+        #     document_hash=document.file_hash,
+        #     remote_Id=remote1.Id
+        # )
         db.session.add(mirror)
-        db.session.add(mirror1)
+        # db.session.add(mirror1)
         db.session.commit()
 
         print("Example entries created!")
 
-        q    = select(Document).where(Document.file_hash == "abc123def456")
-        r = db.session.scalars(q)
-        for row in r.all():
-            print(row)
-            print(row.mirrors)
+        # q    = select(Document).where(Document.file_hash == "abc123def456")
+        # r = db.session.scalars(q)
+        # for row in r.all():
+        #     print(row)
+        #     print(row.mirrors)
 
 
-        q = select(Remote).where(Remote.Id == 2)
-        r = db.session.scalars(q)
-        for row in r.all():
-            print(row)
-            print(row.mirrors)
-            db.session.delete(row)
+        # q = select(Remote).where(Remote.Id == 2)
+        # r = db.session.scalars(q)
+        # for row in r.all():
+        #     print(row)
+        #     print(row.mirrors)
+        #     db.session.delete(row)
 
-        q = select(DocumentMirror).where(DocumentMirror.Id == 2)
-        r = db.session.scalars(q)
-        for row in r.all():
-            print(row)
+        # q = select(DocumentMirror).where(DocumentMirror.Id == 2)
+        # r = db.session.scalars(q)
+        # for row in r.all():
+        #     print(row)

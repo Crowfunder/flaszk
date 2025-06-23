@@ -1,7 +1,4 @@
-from flask import Blueprint, request, current_app, g, render_template, flash, redirect, url_for, jsonify, Response
-from sqlalchemy import select
-from sqlalchemy.exc import OperationalError
-import datetime
+from flask import Blueprint,
 
 from app.app import db
 from app.database.models import Remote, Document, DocumentMetadata, DocumentMirror
@@ -9,12 +6,9 @@ from .importService import syncWithAll
 from .exportService import exportLocalDocuments, authenticateRequestor
 from .utils.netutils import getRequestIP
 from app.database.schema.schemas import *
+from netConfig import SERVER_PING_BUSY, SERVER_PING_ENDPOINT, SERVER_PING_OK
 
 bp = Blueprint('bp_util', __name__)
-
-SERVER_PING_ENDPOINT = '/server/ping'
-SERVER_PING_BUSY = 503
-SERVER_PING_OK = 200
 
 
 # Endpoint for getting pinged for hosts to get the following information

@@ -1,7 +1,11 @@
-from app.database.models import Remote, Document, DocumentMetadata, DocumentMirror
-from app.app import db
 from flask import current_app
 from sqlalchemy import select
+
+from app.database.models import Remote, Document, DocumentMetadata, DocumentMirror
+from app.app import db
+from ..sync.syncController import SERVER_SYNC_ENDPOINT
+from ..utils.remoteUtils import checkIfRemoteUp
+from ..utils.netUtils import requestGetWithSecret
 
 
 def importRemoteDocument(document_hash: str, remote: Remote):
@@ -67,11 +71,15 @@ def importLocalDocument(document_hash: str, file_path: str):
         db.session.add(document)
         db.session.commit()
 
-# def syncWithRemote(remote: Remote):
-    
 
+def syncWithRemote(remote: Remote):
+    url = f'{remote.address}:{remote.port}/{SERVER_SYNC_ENDPOINT}'
+    response_json = requestGetWithSecret(url, remote.secret)
+    print(response_json)
+    
 
 def syncWithAll():
     remotes = Remote.query.all()
     for remote in remotes:
-        syncWithRemote(remote)
+        if checkIfRemoteUp(remote):
+            syncWithRemote(remote)
