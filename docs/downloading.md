@@ -29,7 +29,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    A[[Start: Iterate over Document.Remotes]]
+    A[[Start: Iterate over Document.Mirrors]]
     B[Send fetch request with Secret & FileHash]
     C[On Remote: Find document by FileHash in Index]
     D{Is document available locally on Remote?}
