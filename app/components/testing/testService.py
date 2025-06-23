@@ -1,4 +1,4 @@
-from app.database.models import Remote, Document, DocumentMetadata, DocumentMirror
+from app.database.models import Remote, Document
 from app.app import db
 from flask import current_app
 from sqlalchemy import select
@@ -42,19 +42,19 @@ def db_test():
 
         # Link the metadata to the document (backref)
         metadata = DocumentMetadata(
-            document_Id=document.local_Id  # Will be set after document is created
+            document_hash=document.file_hash  # Will be set after document is created
         )
         db.session.add(metadata)
         db.session.commit()
 
         # Create a mirror relationship (Document <-> Remote)
         mirror = DocumentMirror(
-            document_Id=document.local_Id,
+            document_hash=document.file_hash,
             remote_Id=remote.Id
         )
 
         mirror1 = DocumentMirror(
-            document_Id=document.local_Id,
+            document_hash=document.file_hash,
             remote_Id=remote1.Id
         )
         db.session.add(mirror)
@@ -63,10 +63,11 @@ def db_test():
 
         print("Example entries created!")
 
-        q    = select(Document).where(Document.local_Id == 1)
+        q    = select(Document).where(Document.file_hash == "abc123def456")
         r = db.session.scalars(q)
         for row in r.all():
             print(row)
+            print(row.mirrors)
 
 
         q = select(Remote).where(Remote.Id == 2)

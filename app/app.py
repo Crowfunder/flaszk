@@ -3,7 +3,7 @@ import sys
 from flask import Flask, render_template, request
 from werkzeug.debug import DebuggedApplication
 from app.database.models import *
-from app.database.tests import *
+from app.components.testing.testService import *
 
 
 
@@ -69,7 +69,7 @@ def create_app():
     # from .views.index import bp as bp_index
     # app.register_blueprint(bp_index)
 
-    from .views.test import bp as bp_test
+    from .components.testing.testController import bp as bp_test
     app.register_blueprint(bp_test)
 
     return app

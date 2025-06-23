@@ -4,10 +4,10 @@ from sqlalchemy.exc import OperationalError
 import datetime
 
 
-from ..app import db
+from app.app import db
 from app.database.models import Remote, Document, DocumentMetadata, DocumentMirror
-from ..database.tests import db_test
-from ..database.schema.schemas import *
+from .testService import db_test
+from app.database.schema.schemas import *
 
 bp = Blueprint('bp_test', __name__)
 
