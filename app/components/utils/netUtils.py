@@ -1,9 +1,7 @@
 from flask import request, jsonify
 import requests
 
-from netConfig import SERVER_PING_BUSY, SERVER_PING_ENDPOINT, SERVER_PING_OK, SECRET_HEADER
-
-
+from .netConfig import SERVER_PING_BUSY, SERVER_PING_ENDPOINT, SECRET_HEADER, HOST_TIMEOUT
 
 def getRequestIP():
     '''
@@ -22,11 +20,11 @@ def checkIfHostUp(ip_addr, port):
     Utility for checking if the host under specified ip and port is up and available
     '''
     try:
-        response = requests.get(f'{ip_addr}:{port}/{SERVER_PING_ENDPOINT}')
+        response = requests.get(f'http://{ip_addr}:{port}/{SERVER_PING_ENDPOINT}', timeout=HOST_TIMEOUT)
         if response.status_code == SERVER_PING_BUSY:
             return False
         return True
-    except requests.exceptions.RequestException:
+    except requests.exceptions.RequestException as e:
         return False
     
 
@@ -34,6 +32,8 @@ def requestGetWithSecret(url, secret):
     headers = {
         SECRET_HEADER : secret
     }
+    if 'http' not in url:
+        url = 'http://' + url
     response = requests.get(url, headers=headers)
     response.raise_for_status()
-    return jsonify(response.json())
+    return response.json()

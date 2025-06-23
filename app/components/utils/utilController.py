@@ -1,12 +1,7 @@
-from flask import Blueprint,
+from flask import Blueprint
 
-from app.app import db
-from app.database.models import Remote, Document, DocumentMetadata, DocumentMirror
-from .importService import syncWithAll
-from .exportService import exportLocalDocuments, authenticateRequestor
-from .utils.netutils import getRequestIP
 from app.database.schema.schemas import *
-from netConfig import SERVER_PING_BUSY, SERVER_PING_ENDPOINT, SERVER_PING_OK
+from .netConfig import SERVER_PING_BUSY, SERVER_PING_ENDPOINT, SERVER_PING_OK
 
 bp = Blueprint('bp_util', __name__)
 

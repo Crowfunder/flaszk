@@ -2,8 +2,9 @@ from flask import current_app
 from sqlalchemy import select
 
 from app.database.models import Remote, Document, DocumentMetadata, DocumentMirror
+from app.database.schema.schemas import DocumentSchema
 from app.app import db
-from ..sync.syncController import SERVER_SYNC_ENDPOINT
+from ..sync.syncConfig import SERVER_SYNC_ENDPOINT
 from ..utils.remoteUtils import checkIfRemoteUp
 from ..utils.netUtils import requestGetWithSecret
 
@@ -23,19 +24,19 @@ def importRemoteDocument(document_hash: str, remote: Remote):
         - Commits all changes to the database.
     """
     
-    # Check if document is local
-    localDocument = Document.query.get(document_hash)
+    # Check if document has been indexed
+    indexedDocument = Document.query.get(document_hash)
     
-    # Document is available only on remote
-    if not localDocument:
-        document = Document(
+    # Document was not indexed before
+    if not indexedDocument:
+        indexedDocument = Document(
             file_hash=document_hash,
             is_local=False
         )
-        db.session.add(document)
+        db.session.add(indexedDocument)
     
     # Check if this mirror already exists
-    existingMirror = DocumentMirror.query.filter_by(document_hash=document_hash, remote_Id=remote.Id)
+    existingMirror = DocumentMirror.query.filter_by(document_hash=document_hash, remote_Id=remote.Id).one_or_none()
     if not existingMirror:
         mirror = DocumentMirror(
             document_hash=document_hash,
@@ -58,25 +59,32 @@ def importLocalDocument(document_hash: str, file_path: str):
         - If not, creates a new Document entry with is_local=True and the provided file_path.
         - Commits the new document to the database.
     """
-    # Check if document already exists
+    # Check if document was already indexed
     localDocument = Document.query.get(document_hash)
     
     # Create if not
     if not localDocument:
-        document = Document(
+        localDocument = Document(
             file_hash=document_hash,
             file_path=file_path,
             is_local=True
         )
-        db.session.add(document)
-        db.session.commit()
+        db.session.add(localDocument)
+
+    # Document was indexed, but only from remotes
+    if not localDocument.is_local():
+        localDocument.is_local = True
+
+    db.session.commit()
 
 
 def syncWithRemote(remote: Remote):
     url = f'{remote.address}:{remote.port}/{SERVER_SYNC_ENDPOINT}'
     response_json = requestGetWithSecret(url, remote.secret)
-    print(response_json)
-    
+    for document in response_json:
+        document_hash = document['file_hash']
+        importRemoteDocument(document_hash, remote)
+
 
 def syncWithAll():
     remotes = Remote.query.all()

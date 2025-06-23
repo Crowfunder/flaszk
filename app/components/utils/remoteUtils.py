@@ -1,5 +1,4 @@
 from flask import request
-import requests
 
 from app.database.models import Remote, Document
 from .netUtils import checkIfHostUp
@@ -24,7 +23,8 @@ def authenticateRemote(ip_address, secret):
     """
 
     # Assure that the remote IP is known
-    remote = Document.query.filter_by(ip_address=ip_address).one_or_none()
+    remote = Remote.query.filter_by(address=ip_address).one_or_none()
+    # remote = Remote.query.filter_by(address=ip_address).all()[0] THIS MAY BE USEFUL FOR LOCAL DOUBLE SERVER TESTING!!
     if not remote:
         return False
 
