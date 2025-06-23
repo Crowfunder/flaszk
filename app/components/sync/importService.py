@@ -90,4 +90,7 @@ def syncWithAll():
     remotes = Remote.query.all()
     for remote in remotes:
         if checkIfRemoteUp(remote):
-            syncWithRemote(remote)
+            try:
+                syncWithRemote(remote)
+            except:
+                continue

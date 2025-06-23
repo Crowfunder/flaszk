@@ -15,6 +15,10 @@ def getRequestIP():
     return ip
 
 
+def getRequestSecret():
+    return request.headers.get(SECRET_HEADER)
+
+
 def checkIfHostUp(ip_addr, port):
     '''
     Utility for checking if the host under specified ip and port is up and available

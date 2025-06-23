@@ -7,7 +7,7 @@ from app.database.models import Remote, Document, DocumentMetadata, DocumentMirr
 from .importService import syncWithAll
 from .exportService import exportLocalDocuments
 from .syncConfig import CLIENT_SYNC_ENDPOINT, SERVER_SYNC_ENDPOINT
-from ..utils.netUtils import getRequestIP
+from ..utils.netUtils import getRequestIP, getRequestSecret
 from ..utils.remoteUtils import authenticateRemote
 from app.database.schema.schemas import *
 
@@ -26,7 +26,7 @@ def clientSyncAll():
 @bp.route(SERVER_SYNC_ENDPOINT, methods=['GET'])
 def serverSyncAll():
     remote_ip = getRequestIP()
-    secret = 'supersecret123'
+    secret = getRequestSecret()
     if authenticateRemote(remote_ip, secret):
         return exportLocalDocuments(), 200
     
