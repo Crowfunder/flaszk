@@ -77,4 +77,4 @@ def requestGetWithSecret(url, secret, extra_headers={}):
         url = f'{REQUEST_PROTOCOL}://' + url
     response = requests.get(url, headers=headers, timeout=HOST_TIMEOUT)
     response.raise_for_status()
-    return response.json()
+    return response

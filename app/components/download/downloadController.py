@@ -13,9 +13,10 @@ bp = Blueprint('bp_download', __name__)
 @bp.route(CLIENT_DOWNLOAD_ENDPOINT, methods=['GET'])
 def clientDownload():
     file_hash = getRequestFilehash()
-    document = downloadDocumentFromHash(file_hash)
-    if document:
-        return document, 200
+    document_response = downloadDocumentFromHash(file_hash)
+    if document_response:
+        # print(document_response)
+        return document_response
     return 'document not found', 404
     
 
@@ -30,5 +31,6 @@ def serverServeDownload():
         document = downloadDocumentFromHash(file_hash)
         if not document:
             return 'document not found or error', 404
+        return document
     return 'unknown remote', 403
     
