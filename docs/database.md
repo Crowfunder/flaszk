@@ -14,8 +14,7 @@
 
 | Field                  | Type                                 | Description                                                             |
 | ---------------------- | ------------------------------------ | ----------------------------------------------------------------------- |
-| `local_Id`             | `Integer`                            | Primary key. Unique local ID of the document.                           |
-| `file_hash`            | `String`                             | Hash of the file used for identification (e.g., SHA-256).      |
+| `file_hash`            | `String`                             | Primary Key. Hash of the file used for identification (e.g., SHA-256).      |
 | `local_file_path`      | `String?`                             | Optional local file path if the file is available locally.             |
 | `is_local`             | `Boolean`                            | Indicates whether the file is stored locally (`True`) or only mirrored. |
 | `document_metadata_id` | `Integer`                            | Foreign key to `documents_metadata.Id`, links to associated metadata.   |
