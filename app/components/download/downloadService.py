@@ -56,19 +56,20 @@ def downloadRemoteDocument(document: Document):
     mirrors = DocumentMirror.query.filter_by(document_hash=document.file_hash).all()
     for mirror in mirrors:
         try:
-            remote = Remote.query.get(mirror.remote_id)
-            remote_document = remoteSendGetWithSecret(remote, SERVER_DOWNLOAD_ENDPOINT)
+            remote = Remote.query.get(mirror.remote_Id)
+            file_header = {DOWNLOAD_URL_PARAM : document.file_hash}
+            remote_document = remoteSendGetWithSecret(remote, SERVER_DOWNLOAD_ENDPOINT, file_header)
             if remote_document:
                 return remote_document
-        except:
+        except Exception as e:
             continue
     return None
 
 
 def downloadLocalDocument(document: Document):
-    if not checkIfFileExists(document.local_file_path) or not verifyDocumentHash(document):
+    if not checkIfFileExists(document.file_path) or not verifyDocumentHash(document):
         return None #  Should also start indexing!!!
-    return send_file(document.local_file_path, as_attachment=True)
+    return send_file(document.file_path, as_attachment=True)
 
 
 def downloadDocumentFromHash(file_hash):
@@ -83,20 +84,14 @@ def downloadDocumentFromHash(file_hash):
     return downloadLocalDocument(document)
 
 
-def serveLocalDocument(document: Document):
-    if not checkIfFileExists(document.local_file_path) or not verifyDocumentHash(document):
-        return None #  Should also start indexing!!!
-    return send_file(document.local_file_path, as_attachment=True)
-
-
 def serveDocumentFromHash(file_hash):
     document = Document.query.get(file_hash)
     if not document:
         return None
     
     if document.is_local:
-        return serveLocalDocument(document)
+        return downloadLocalDocument(document)
     
     return None
     
-    # serveRemoteDocument(), for public networks only, not for now though
+    # downloadRemoteDocument(), for public networks only, not for now though

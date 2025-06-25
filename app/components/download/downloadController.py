@@ -1,7 +1,7 @@
 from flask import Blueprint
 
 from .downloadConfig import CLIENT_DOWNLOAD_ENDPOINT, SERVER_DOWNLOAD_ENDPOINT, DOWNLOAD_TTL, DOWNLOAD_URL_PARAM
-from .downloadService import downloadDocumentFromHash, getRequestFilehash
+from .downloadService import downloadDocumentFromHash, getRequestFilehash, getRequestTTL
 from ..utils.netUtils import getRequestIP, getRequestSecret
 from ..utils.remoteUtils import authenticateRemote
 
@@ -25,6 +25,7 @@ def serverServeDownload():
     remote_ip = getRequestIP()
     secret = getRequestSecret()
     file_hash = getRequestFilehash()
+    ttl = getRequestTTL()  # TODO: not yet implemented!
     if authenticateRemote(remote_ip, secret):
         document = downloadDocumentFromHash(file_hash)
         if not document:

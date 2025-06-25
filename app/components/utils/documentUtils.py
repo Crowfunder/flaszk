@@ -2,12 +2,11 @@ from ..utils.fileUtils import getFileHash
 from app.database.models import Document, Remote, DocumentMetadata, DocumentMirror
 from app.app import db
 
-def importLocalDocument(document_hash: str, file_path: str):
+def importLocalDocument(file_path: str):
     """
     Imports a local document into the database.
 
     Args:
-        document_hash (str): The unique hash identifying the document.
         file_path (str): The local file path of the document.
 
     Behavior:
@@ -15,6 +14,10 @@ def importLocalDocument(document_hash: str, file_path: str):
         - If not, creates a new Document entry with is_local=True and the provided file_path.
         - Commits the new document to the database.
     """
+
+    # Calculate document hash
+    document_hash = getFileHash(file_path)
+
     # Check if document was already indexed
     localDocument = Document.query.get(document_hash)
     
@@ -28,7 +31,7 @@ def importLocalDocument(document_hash: str, file_path: str):
         db.session.add(localDocument)
 
     # Document was indexed, but only from remotes
-    if not localDocument.is_local():
+    if not localDocument.is_local:
         localDocument.is_local = True
 
     db.session.commit()
@@ -72,4 +75,4 @@ def importRemoteDocument(document_hash: str, remote: Remote):
 
 
 def verifyDocumentHash(document: Document):
-    return getFileHash(document.local_file_path) == document.file_hash
+    return getFileHash(document.file_path) == document.file_hash

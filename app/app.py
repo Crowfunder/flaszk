@@ -4,6 +4,7 @@ from flask import Flask, render_template, request
 from werkzeug.debug import DebuggedApplication
 from app.database.models import *
 from app.components.testing.testService import *
+import click
 
 
 
@@ -48,15 +49,23 @@ def create_app():
 
 
 
-    # https://flask-sqlalchemy.palletsprojects.com/en/3.1.x/quickstart/#configure-the-extension
-    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.getcwd()}/instance/database.sqlite"
+    # Allow database path override via FLASK_DB_PATH env or --db-path argument
+    db_path = os.environ.get("FLASK_DB_PATH")
+    if not db_path:
+        # Check for --db-path in sys.argv
+        for idx, arg in enumerate(sys.argv):
+            if arg == "--db-path" and idx + 1 < len(sys.argv):
+                db_path = sys.argv[idx + 1]
+                break
+    if not db_path:
+        db_path = f"{os.getcwd()}/instance/database.sqlite"
+
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
     db.init_app(app)
 
     # Comment out for double-hosted tests
     with app.app_context():
         db.create_all()
-
-
 
     # Setup custom "Not found" page
     # https://flask.palletsprojects.com/en/3.0.x/errorhandling/#custom-error-pages

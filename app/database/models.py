@@ -31,7 +31,7 @@ class Document(db.Model):
     __tablename__ = 'documents'
 
     file_hash = db.Column(db.String, primary_key=True, nullable=False)
-    local_file_path = db.Column(db.String, nullable=True)
+    file_path = db.Column(db.String, nullable=True)
     is_local = db.Column(db.Boolean, nullable=False, default=False)
     document_metadata = db.relationship('DocumentMetadata', cascade='all, delete', backref=db.backref('documents', lazy=True))
     mirrors = db.relationship('DocumentMirror', cascade='all, delete', backref='documents', lazy=True)

@@ -49,7 +49,7 @@ def checkIfHostUp(ip_addr, port):
         return False
     
 
-def requestGetWithSecret(url, secret):
+def requestGetWithSecret(url, secret, extra_headers={}):
     '''
     Sends a GET request to the specified URL with a secret included in the headers.
 
@@ -72,6 +72,7 @@ def requestGetWithSecret(url, secret):
     headers = {
         SECRET_HEADER : secret
     }
+    headers.update(extra_headers)
     if REQUEST_PROTOCOL not in url:
         url = f'{REQUEST_PROTOCOL}://' + url
     response = requests.get(url, headers=headers, timeout=HOST_TIMEOUT)

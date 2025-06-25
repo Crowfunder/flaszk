@@ -15,7 +15,7 @@
 | Field                  | Type                                 | Description                                                             |
 | ---------------------- | ------------------------------------ | ----------------------------------------------------------------------- |
 | `file_hash`            | `String`                             | Primary Key. Hash of the file used for identification (e.g., SHA-256).      |
-| `local_file_path`      | `String?`                             | Optional local file path if the file is available locally.             |
+| `file_path`      | `String?`                             | Optional local file path if the file is available locally.             |
 | `is_local`             | `Boolean`                            | Indicates whether the file is stored locally (`True`) or only mirrored. |
 | `document_metadata_id` | `Integer`                            | Foreign key to `documents_metadata.Id`, links to associated metadata.   |
 | `mirrors`              | `Relationship[List[DocumentMirror]]` | All remote mirrors storing this document.                               |

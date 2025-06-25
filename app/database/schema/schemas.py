@@ -42,7 +42,7 @@ class DocumentSchema(Schema):
 
     # local_Id = fields.Int(dump_only=True)
     file_hash = fields.Str()
-    # local_file_path = fields.Str()
+    # file_path = fields.Str()
     # is_local = fields.Bool()
     # document_metadata = fields.Nested(DocumentMetadataSchema, many=True, dump_only=True)
     # mirrors = fields.Nested(DocumentMirrorSchema, many=True, dump_only=True)

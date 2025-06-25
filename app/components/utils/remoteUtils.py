@@ -41,9 +41,9 @@ def checkIfRemoteUp(remote: Remote):
     return checkIfHostUp(remote.address, remote.port)
 
 
-def remoteSendGetWithSecret(remote: Remote, endpoint):
+def remoteSendGetWithSecret(remote: Remote, endpoint, extra_headers = {}):
     '''
     Wrapper for `netUtils.requestGetWithSecret()` that processes Remote objects.
     '''
     url = f'{remote.address}:{remote.port}/{endpoint}'
-    return requestGetWithSecret(url, remote.secret)
+    return requestGetWithSecret(url, remote.secret, extra_headers)

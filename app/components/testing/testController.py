@@ -6,7 +6,7 @@ import datetime
 
 from app.app import db
 from app.database.models import Remote, Document, DocumentMetadata, DocumentMirror
-from .testService import db_test, create_remote_A, create_remote_B, create_documents
+from .testService import db_test, create_remote_5000, create_remote_5001, create_documents
 from app.database.schema.schemas import *
 
 bp = Blueprint('bp_test', __name__)
@@ -27,12 +27,12 @@ def dumpdb():
 
 @bp.route('/test/remote5000', methods=['GET'])
 def remote5000():
-    create_remote_A()
+    create_remote_5000()
     return "oke"
 
 @bp.route('/test/remote5001', methods=['GET'])
 def remote50001():
-    create_remote_B()
+    create_remote_5001()
     return "oke"
 
 
@@ -40,3 +40,9 @@ def remote50001():
 def createdoc():
     create_documents()
     return "oke"
+
+@bp.route('/test/remotes', methods=['GET'])
+def allremotes():
+    r = Remote.query.all()
+    r = RemoteSchema(many=True).dump(r)
+    return r, 200
