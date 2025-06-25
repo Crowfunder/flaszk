@@ -51,6 +51,22 @@ def handleTTL(request_ttl):
 
 
 def downloadRemoteDocument(document: Document):
+    """
+    Attempts to download a document from remote mirrors and serve it as a Flask response.
+
+    Args:
+        document (Document): The Document object to download from a remote source.
+
+    Returns:
+        Response: Flask response with the file content from a remote mirror, or None if not found or checksum fails.
+
+    Behavior:
+        - Iterates over all DocumentMirror entries for the given document.
+        - For each mirror, retrieves the associated Remote.
+        - Sends a GET request to the remote's SERVER_DOWNLOAD_ENDPOINT with the document's file hash.
+        - If a response is received and the checksum matches the document's file hash, returns a Flask Response with the file content.
+        - If no valid response is found from any mirror, returns None.
+    """
     mirrors = DocumentMirror.query.filter_by(document_hash=document.file_hash).all()
     for mirror in mirrors:
         try:

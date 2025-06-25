@@ -15,10 +15,9 @@ def clientDownload():
     file_hash = getRequestFilehash()
     document_response = downloadDocumentFromHash(file_hash)
     if document_response:
-        # print(document_response)
         return document_response
     return 'document not found', 404
-    
+
 
 # Receive file download request from other client
 @bp.route(SERVER_DOWNLOAD_ENDPOINT, methods=['GET'])

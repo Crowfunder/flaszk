@@ -15,6 +15,7 @@ bp = Blueprint('bp_sync', __name__)
 
 
 # Request synchronizing with paired Remotes
+# TODO: Secure with @login_required !!!!
 @bp.route(CLIENT_SYNC_ENDPOINT, methods=['GET'])
 def clientSyncAll():
     syncWithAll()
