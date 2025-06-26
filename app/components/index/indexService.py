@@ -2,7 +2,7 @@ import os
 import os.path
 import datetime
 
-from .indexerConfig import INDEXED_EXTS, INDEXED_PATHS
+from .indexConfig import INDEXED_EXTS, INDEXED_PATHS
 from app.database.models import DocumentMetadata, Document, DocumentMirror
 from app.app import db
 from ..utils.documentUtils import importLocalDocument
@@ -109,8 +109,9 @@ def pruneIndex():
     for document in documents:
         if not checkIfFileExists(document.file_path):
             # Check if document has any mirrors, delete it if not
-            if not DocumentMirror.query.filter_by(document_hash=document.file_hash):
+            if not DocumentMirror.query.filter_by(document_hash=document.file_hash).all():
                 db.session.delete(document)
             else:
                 document.is_local = False
+    db.session.commit()
             

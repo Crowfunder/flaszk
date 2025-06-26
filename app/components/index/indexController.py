@@ -3,8 +3,8 @@ from sqlalchemy import select
 from sqlalchemy.exc import OperationalError
 import datetime
 
-from .indexerConfig import CLIENT_INDEX_ENDPOINT
-from .indexerService import startIndexing
+from .indexConfig import CLIENT_INDEX_ENDPOINT, CLIENT_PRUNE_ENDPOINT
+from .indexService import startIndexing, pruneIndex
 
 bp = Blueprint('bp_index', __name__)
 
@@ -16,3 +16,8 @@ bp = Blueprint('bp_index', __name__)
 def clientIndexing():
     startIndexing()
     return 'indexed', 200
+
+@bp.route(CLIENT_PRUNE_ENDPOINT, methods=['GET'])
+def clientPrune():
+    pruneIndex()
+    return 'pruned', 200

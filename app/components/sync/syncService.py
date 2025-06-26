@@ -2,7 +2,7 @@ from flask import current_app
 from sqlalchemy import select
 
 from app.database.models import Remote, Document, DocumentMetadata, DocumentMirror
-from app.database.schema.schemas import DocumentSchema
+from app.database.schema.schemas import SharedDocumentSchema
 from app.app import db
 from .syncConfig import SERVER_SYNC_ENDPOINT
 from ..utils.remoteUtils import checkIfRemoteUp
@@ -55,4 +55,4 @@ def exportLocalDocuments():
         list: A list of serialized local Document objects using DocumentSchema.
     """
     documents = Document.query.filter_by(is_local=True)
-    return DocumentSchema(many=True).dump(documents)
+    return SharedDocumentSchema(many=True).dump(documents)

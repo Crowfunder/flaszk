@@ -92,7 +92,7 @@ def create_app():
     from .components.pairing.pairingController import bp as bp_pairing
     app.register_blueprint(bp_pairing)
 
-    from .components.indexer.indexerController import bp as bp_index
+    from .components.index.indexController import bp as bp_index
     app.register_blueprint(bp_index)
 
     return app

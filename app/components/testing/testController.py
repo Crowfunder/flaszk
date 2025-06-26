@@ -21,7 +21,7 @@ def dbinit():
 @bp.route('/test/dumpdb', methods=['GET'])
 def dumpdb():
     r = Document.query.all()
-    r = DocumentSchema(many=True).dump(r)
+    r = SharedDocumentSchema(many=True).dump(r)
     return r, 200
 
 
