@@ -1,6 +1,6 @@
 from docx import Document
 
-from _parser import Parser
+from ._parser import Parser
 
 class DocxParser(Parser):
     def get_ext(self):

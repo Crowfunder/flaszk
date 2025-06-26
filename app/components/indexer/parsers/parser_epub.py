@@ -1,6 +1,6 @@
 from ebooklib import epub
 
-from _parser import Parser
+from ._parser import Parser
 
 class EpubParser(Parser):
     def get_ext(self) -> str:

@@ -28,7 +28,7 @@ class DocumentMetadata(db.Model):
     file_name = db.Column(db.String, nullable=True)
     title = db.Column(db.String, nullable=True)
     author = db.Column(db.String, nullable=True)
-    date = db.Column(db.models.DateTimeField, nullable=True)
+    date = db.Column(db.DateTime, nullable=True)
 
 
 @dataclass

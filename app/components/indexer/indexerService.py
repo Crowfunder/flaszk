@@ -2,7 +2,7 @@ import os
 import os.path
 import datetime
 
-from indexerConfig import INDEXED_EXTS, INDEXED_PATHS
+from .indexerConfig import INDEXED_EXTS, INDEXED_PATHS
 from app.database.models import DocumentMetadata, Document, DocumentMirror
 from app.app import db
 from ..utils.documentUtils import importLocalDocument
@@ -50,7 +50,7 @@ def parseDocumentMetadata(document: Document, parsers: dict):
     # Check if metadata for this file exists
     metadata = DocumentMetadata.query.filter_by(document_hash=document.file_hash).first()
     if not metadata:
-        metadata = DocumentMetadata()
+        metadata = DocumentMetadata(document_hash = document.file_hash)
         db.session.add(metadata)
 
     file_path = document.file_path

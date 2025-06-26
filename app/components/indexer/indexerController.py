@@ -3,8 +3,8 @@ from sqlalchemy import select
 from sqlalchemy.exc import OperationalError
 import datetime
 
-from indexerConfig import CLIENT_INDEX_ENDPOINT
-from indexerService import startIndexing
+from .indexerConfig import CLIENT_INDEX_ENDPOINT
+from .indexerService import startIndexing
 
 bp = Blueprint('bp_index', __name__)
 
