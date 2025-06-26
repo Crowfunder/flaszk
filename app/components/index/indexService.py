@@ -101,6 +101,8 @@ def startIndexing():
             if file_ext in INDEXED_EXTS:
                 document = importLocalDocument(file_path)
                 parseDocumentMetadata(document, parsers)
+    # We probably want to invoke pruning after indexing
+    pruneIndex()
 
     
 def pruneIndex():

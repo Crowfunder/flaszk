@@ -7,6 +7,7 @@ from app.database.models import Document, DocumentMirror, Remote
 from ..utils.fileUtils import checkIfFileExists
 from ..utils.documentUtils import verifyDocumentHash
 from ..utils.remoteUtils import remoteSendGetWithSecret
+from ..index.indexService import startIndexing
 from app.app import db
 
 
@@ -98,8 +99,10 @@ def downloadLocalDocument(document: Document):
     Returns:
         Response: Flask response with the file as an attachment, or None if not found or invalid.
     """
-    if not checkIfFileExists(document.file_path) and verifyDocumentHash(document):
-        return None  # Should also start indexing!
+    if not checkIfFileExists(document.file_path) or not verifyDocumentHash(document):
+        startIndexing()
+        return None  # TODO: Should give a notification on the frontend that index is regenerating
+
     return send_file(document.file_path, as_attachment=True)
 
 
