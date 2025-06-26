@@ -20,12 +20,12 @@ class serverEventsHandler():
             
         @self.socketio.on("estabilish_secret_start")
         def on_estabilish_seceret_start(data,p):
-            if self.b_secret == None:
+            if not self.b_secret:
                 self.b_secret=generateExponent()
                 msg=modularExponentiation(data,self.b_secret,p)
-                self.socketio.emit('server_secret_resonse',msg)
+                self.socketio.emit('server_secret_resonse',msg,to=request.sid)
             else:
-                self.socketio.emit('Other_device_is_pairing')
+                self.socketio.emit('Other_device_is_pairing', to=request.sid)
             
         @self.socketio.on("estabilish_seceret_end")
         def on_estabilish_seceret_end(data,p):
