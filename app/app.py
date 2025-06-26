@@ -95,6 +95,9 @@ def create_app():
     from .components.index.indexController import bp as bp_index
     app.register_blueprint(bp_index)
 
+    from .components.client.clientController import bp as bp_client
+    app.register_blueprint(bp_client)
+
     return app
 
 
