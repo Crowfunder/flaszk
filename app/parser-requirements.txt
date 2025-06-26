@@ -1,0 +1,6 @@
+-r requirements.txt
+odfpy
+python-docx
+EbookLib
+PyPDF2
+PyCryptodome
