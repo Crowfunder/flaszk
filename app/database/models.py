@@ -25,6 +25,11 @@ class DocumentMetadata(db.Model):
 
     Id = db.Column(db.Integer, primary_key=True)
     document_hash = db.Column(db.String, db.ForeignKey('documents.file_hash', ondelete='CASCADE'), nullable=False)
+    file_name = db.Column(db.String, nullable=True)
+    title = db.Column(db.String, nullable=True)
+    author = db.Column(db.String, nullable=True)
+    date = db.Column(db.models.DateTimeField, nullable=True)
+
 
 @dataclass
 class Document(db.Model):
