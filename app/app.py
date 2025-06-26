@@ -46,6 +46,7 @@ def create_app():
     except OSError:
         pass
 
+    # Adding flask-socketIO extension to app
 
 
     # https://flask-sqlalchemy.palletsprojects.com/en/3.1.x/quickstart/#configure-the-extension
@@ -55,8 +56,6 @@ def create_app():
     # Comment out for double-hosted tests
     with app.app_context():
         db.create_all()
-
-
 
     # Setup custom "Not found" page
     # https://flask.palletsprojects.com/en/3.0.x/errorhandling/#custom-error-pages
