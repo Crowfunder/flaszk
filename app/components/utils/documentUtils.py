@@ -1,4 +1,4 @@
-from ..utils.fileUtils import getFileHash
+from ..utils.fileUtils import getFileHash, checkIfFileExists
 from app.database.models import Document, Remote, DocumentMetadata, DocumentMirror
 from app.app import db
 
@@ -34,7 +34,14 @@ def importLocalDocument(file_path: str):
     if not localDocument.is_local:
         localDocument.is_local = True
 
+    # Perform an integrity check
+    # Fix a document with dead file_path
+    else: 
+        if not checkIfFileExists(localDocument.file_path) or not verifyDocumentHash(localDocument):
+            localDocument.file_path = file_path
+
     db.session.commit()
+    return localDocument
 
 
 def importRemoteDocument(document_hash: str, remote: Remote):
@@ -72,6 +79,7 @@ def importRemoteDocument(document_hash: str, remote: Remote):
         )
         db.session.add(mirror)
     db.session.commit()
+    return indexedDocument
 
 
 def verifyDocumentHash(document: Document):
