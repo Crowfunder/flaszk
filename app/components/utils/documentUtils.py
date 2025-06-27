@@ -44,7 +44,7 @@ def importLocalDocument(file_path: str):
     return localDocument
 
 
-def importRemoteDocument(document_hash: str, remote: Remote):
+def importRemoteDocument(document_hash: str, remote: Remote, document_metadata: DocumentMetadata):
     """
     Imports a document from a remote source into the local database.
 
@@ -66,10 +66,17 @@ def importRemoteDocument(document_hash: str, remote: Remote):
     if not indexedDocument:
         indexedDocument = Document(
             file_hash=document_hash,
-            is_local=False
+            is_local=False,
         )
         db.session.add(indexedDocument)
     
+    # Check if metadata of this document is available
+    localMetadata = DocumentMetadata.query.filter_by(document_hash=document_metadata.document_hash)
+
+    if not localMetadata:
+        db.session.add(document_metadata)
+
+
     # Check if this mirror already exists
     existingMirror = DocumentMirror.query.filter_by(document_hash=document_hash, remote_Id=remote.Id).one_or_none()
     if not existingMirror:

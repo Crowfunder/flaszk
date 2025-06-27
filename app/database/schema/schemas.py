@@ -51,7 +51,7 @@ class SharedDocumentSchema(Schema):
     file_hash = fields.Str()
     # file_path = fields.Str()
     # is_local = fields.Bool()
-    # document_metadata = fields.Nested(DocumentMetadataSchema, many=True, dump_only=True)
+    document_metadata = fields.Nested(DocumentMetadataSchema, many=True, dump_only=True)
     # mirrors = fields.Nested(DocumentMirrorSchema, many=True, dump_only=True)
 
 class LocalDocumentSchema(Schema):
