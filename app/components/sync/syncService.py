@@ -49,7 +49,7 @@ def syncWithAll():
         if checkIfRemoteUp(remote):
             try:
                 syncWithRemote(remote)
-            except:
+            except Exception as e:
                 continue
 
 

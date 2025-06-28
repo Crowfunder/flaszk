@@ -71,7 +71,7 @@ def importRemoteDocument(document_hash: str, remote: Remote, document_metadata: 
         db.session.add(indexedDocument)
     
     # Check if metadata of this document is available
-    localMetadata = DocumentMetadata.query.filter_by(document_hash=document_metadata.document_hash)
+    localMetadata = DocumentMetadata.query.filter_by(document_hash=document_metadata.document_hash).first()
 
     if not localMetadata:
         db.session.add(document_metadata)

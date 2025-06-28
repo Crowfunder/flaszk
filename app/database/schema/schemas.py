@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, EXCLUDE
+from marshmallow import Schema, fields, EXCLUDE, post_load
 from app.database.models import Document, DocumentMetadata, DocumentMirror, Remote
 
 
@@ -7,7 +7,7 @@ class DocumentMetadataSchema(Schema):
         model = DocumentMetadata
         load_instance = True
         include_fk = True
-        unknown = EXCLUDE  # Ignore unknown fields like Id
+        unknown = EXCLUDE
 
     Id = fields.Int(dump_only=True)
     document_hash = fields.Str(required=True)
@@ -15,6 +15,11 @@ class DocumentMetadataSchema(Schema):
     title = fields.Str(load_default='', allow_none=True)
     author = fields.Str(load_default='', allow_none=True)
     date = fields.DateTime(allow_none=True)
+
+    @post_load
+    def make_metadata(self, data, **kwargs):
+        return DocumentMetadata(**data)
+
 
 class DocumentMirrorSchema(Schema):
     class Meta:
@@ -54,6 +59,11 @@ class SharedDocumentSchema(Schema):
     # is_local = fields.Bool()
     document_metadata = fields.Nested(DocumentMetadataSchema, many=True, dump_only=True)
     # mirrors = fields.Nested(DocumentMirrorSchema, many=True, dump_only=True)
+
+    @post_load
+    def make_document(self, data, **kwargs):
+        return Document(**data)
+
 
 class LocalDocumentSchema(Schema):
     '''

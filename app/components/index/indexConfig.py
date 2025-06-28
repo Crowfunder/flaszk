@@ -1,7 +1,8 @@
 # Indexer configs
 # Folders to index
 INDEXED_PATHS = [
-    "C:\\Users\\storm\\OneDrive\\Pulpit"
+    "C:\\Users\\storm\\OneDrive\\Pulpit",
+    "/home/crowfunder/Documents/Studia"
 ]
 
 # Files with acceptable extensions
@@ -12,7 +13,7 @@ INDEXED_EXTS = [
     "txt",
     "odt",
     "rtf",
-
+    "md"
 ]
 
 CLIENT_INDEX_ENDPOINT = '/client/index'
