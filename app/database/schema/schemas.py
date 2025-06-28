@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, EXCLUDE
 from app.database.models import Document, DocumentMetadata, DocumentMirror, Remote
 
 
@@ -7,12 +7,13 @@ class DocumentMetadataSchema(Schema):
         model = DocumentMetadata
         load_instance = True
         include_fk = True
+        unknown = EXCLUDE  # Ignore unknown fields like Id
 
     Id = fields.Int(dump_only=True)
     document_hash = fields.Str(required=True)
-    file_name = fields.Str()
-    title = fields.Str()
-    author = fields.Str()
+    file_name = fields.Str(load_default='', allow_none=True)
+    title = fields.Str(load_default='', allow_none=True)
+    author = fields.Str(load_default='', allow_none=True)
     date = fields.DateTime(allow_none=True)
 
 class DocumentMirrorSchema(Schema):

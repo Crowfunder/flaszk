@@ -26,7 +26,7 @@ def syncWithRemote(remote: Remote):
     response_json = remoteSendGetWithSecret(remote, SERVER_SYNC_ENDPOINT).json()
     for document in response_json:
         document_hash = document['file_hash']
-        document_metadata_json = document['document_metadata']
+        document_metadata_json = document['document_metadata'][0]
         try:
             document_metadata = DocumentMetadataSchema().load(document_metadata_json)
         except ValidationError as err:
