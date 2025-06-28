@@ -1,11 +1,10 @@
 import os
 import sys
-from flask import Flask, render_template, request
+from flask import Flask, render_template
 from werkzeug.debug import DebuggedApplication
-from app.database.models import *
-from app.components.testing.testService import *
-import click
 
+from app.database.models import db
+from app.components.pairing.pin.pinManager import pin
 
 
 # Flask quickstart:
