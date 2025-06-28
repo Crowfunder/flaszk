@@ -51,7 +51,7 @@ class Remote(db.Model):
     Id = db.Column(db.Integer, primary_key=True)
     address = db.Column(db.String, nullable=False)
     port = db.Column(db.Integer, nullable=False)
-    secret = db.Column(db.String, nullable=False)
+    secret = db.Column(db.Integer, nullable=False)
     name = db.Column(db.String, nullable=True)
     mirrors = db.relationship('DocumentMirror', cascade='all, delete', backref='remotes', lazy=True)
 

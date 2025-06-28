@@ -4,6 +4,7 @@ from flask import Flask, render_template, request
 from werkzeug.debug import DebuggedApplication
 from app.database.models import *
 from app.components.testing.testService import *
+from app.components.pairing.serverEvents import socket_server
 
 
 
@@ -46,8 +47,8 @@ def create_app():
     except OSError:
         pass
 
-    # Adding flask-socketIO extension to app
-
+    
+    
 
     # https://flask-sqlalchemy.palletsprojects.com/en/3.1.x/quickstart/#configure-the-extension
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.getcwd()}/instance/database.sqlite"
