@@ -14,9 +14,3 @@ class EpubParser(Parser):
         title = title_list[0][0] if title_list else ''
         author = author_list[0][0] if author_list else ''
         return self.publish_results(title, author)
-
-# Example usage
-if __name__ == "__main__":
-    path = "C:\\Users\\storm\\OneDrive\\Pulpit\\proces_kafka.epub"
-    docx = EpubParser()
-    print(docx(path))

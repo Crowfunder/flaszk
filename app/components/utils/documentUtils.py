@@ -75,7 +75,8 @@ def importRemoteDocument(document_hash: str, remote: Remote, document_metadata: 
 
     if not localMetadata:
         db.session.add(document_metadata)
-
+    else:
+        localMetadata.merge(document_metadata)
 
     # Check if this mirror already exists
     existingMirror = DocumentMirror.query.filter_by(document_hash=document_hash, remote_Id=remote.Id).one_or_none()
