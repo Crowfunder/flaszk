@@ -1,7 +1,7 @@
 from flask import request
 
 from app.database.models import Remote, Document
-from .netUtils import checkIfHostUp
+from .netUtils import checkIfHostUp, requestGetWithSecret
 
 
 def authenticateRemote(ip_address, secret):
@@ -39,3 +39,11 @@ def checkIfRemoteUp(remote: Remote):
     Wrapper for `netutils.checkIfHostUp()` that processes Remote objects.
     '''
     return checkIfHostUp(remote.address, remote.port)
+
+
+def remoteSendGetWithSecret(remote: Remote, endpoint, extra_headers = {}):
+    '''
+    Wrapper for `netUtils.requestGetWithSecret()` that processes Remote objects.
+    '''
+    url = f'{remote.address}:{remote.port}/{endpoint}'
+    return requestGetWithSecret(url, remote.secret, extra_headers)

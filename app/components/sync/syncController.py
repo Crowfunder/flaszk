@@ -4,8 +4,7 @@ from sqlalchemy.exc import OperationalError
 import datetime
 
 from app.database.models import Remote, Document, DocumentMetadata, DocumentMirror
-from .importService import syncWithAll
-from .exportService import exportLocalDocuments
+from .syncService import syncWithAll, exportLocalDocuments
 from .syncConfig import CLIENT_SYNC_ENDPOINT, SERVER_SYNC_ENDPOINT
 from ..utils.netUtils import getRequestIP, getRequestSecret
 from ..utils.remoteUtils import authenticateRemote
@@ -16,6 +15,7 @@ bp = Blueprint('bp_sync', __name__)
 
 
 # Request synchronizing with paired Remotes
+# TODO: Secure with @login_required !!!!
 @bp.route(CLIENT_SYNC_ENDPOINT, methods=['GET'])
 def clientSyncAll():
     syncWithAll()

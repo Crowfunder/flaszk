@@ -29,7 +29,8 @@
             "module": "flask",
             "env": {
                 "FLASK_APP": "app/app.py",
-                "FLASK_DEBUG": "1"
+                "FLASK_DEBUG": "1",
+                "FLASK_DB_PATH": "${workspaceFolder}/instance/database1.sqlite"
             },
             "args": [
                 "run",
@@ -47,7 +48,8 @@
             "module": "flask",
             "env": {
                 "FLASK_APP": "app/app.py",
-                "FLASK_DEBUG": "0"
+                "FLASK_DEBUG": "0",
+                "FLASK_DB_PATH": "${workspaceFolder}/instance/database2.sqlite"
             },
             "args": [
                 "run",

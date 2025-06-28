@@ -1,5 +1,6 @@
 from app.database.models import Remote, Document, DocumentMetadata, DocumentMirror
 from app.app import db
+from ..utils.documentUtils import importLocalDocument
 from flask import current_app
 from sqlalchemy import select
 
@@ -8,16 +9,17 @@ from hashlib import sha256
 
 
 def create_documents():
-    document = Document(
-        file_hash=sha256(str(random()).encode()).hexdigest(),
-        local_file_path="/var/data/doc1.txt",
-        is_local=True,
-    )
-    db.session.add(document)
-    db.session.commit()
+    # document = Document(
+    #     file_hash=sha256(str(random()).encode()).hexdigest(),
+    #     file_path='/test/test/abc.txt',
+    #     is_local=True,
+    # )
+    # db.session.add(document)
+    # db.session.commit()
+    importLocalDocument("C:\\Users\\storm\\OneDrive\\Pulpit\\test.pdf")
 
 
-def create_remote_A():
+def create_remote_5000():
     remote = Remote(
         address="127.0.0.1",
         port=5000,
@@ -27,10 +29,10 @@ def create_remote_A():
     db.session.add(remote)
     db.session.commit()
 
-def create_remote_B():
+def create_remote_5001():
     remote = Remote(
         address="127.0.0.1",
-        port=5000,
+        port=5001,
         secret="supersecret123",
         name="BackgroundNode"
     )
@@ -68,7 +70,7 @@ def db_test():
     # Create a document
     document = Document(
         file_hash=sha256(str(random()).encode()).hexdigest(),
-        local_file_path="/var/data/doc1.txt",
+        file_path="/var/data/doc1.txt",
         is_local=True,
     )
     db.session.add(document)
