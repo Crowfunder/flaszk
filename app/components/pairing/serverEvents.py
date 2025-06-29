@@ -1,21 +1,25 @@
-from flask import request,app
-from flask_socketio import emit, disconnect,SocketIO
-from funcLibrary import *
-from modularEquations import *
+from flask import request, Blueprint
+from flask import current_app as app
+from flask_socketio import *
+from .funcLibrary import *
+from .modularEquations import *
 import os
+import socketio
 
+bp = Blueprint('bp_server', __name__)
 
 class serverEventsHandler():
-    def __init__(self,server_ip,server_port):
-        self.socketio=SocketIO(app)
+    def __init__(self,socketIO):
+        self.socketio= socketIO
+        self.sio=socketio.Client()
         self.sid_dict_server={}
         self.sid_dict_client={}
-        self.server_ip=server_ip
-        self.server_port=server_port
         self.register_handlers_pairing_server()
         self.register_handlers_pairing_client()
     
-    def run(self):
+    def run(self,server_ip,server_port):
+        self.server_ip=server_ip
+        self.server_port=server_port
         self.socketio.run(app,f'host={self.server_ip}',f'port={self.server_port}') #odpalenie nasłuchiwania serwera na danym ip i porcie
             
     def register_handlers_pairing_server(self):
@@ -84,50 +88,50 @@ class serverEventsHandler():
         del self.sid_dict_server[request.sid]
         
     def register_handlers_pairing_client(self):
-        self.socketio.on_event('server_welcome', self.on_server_welcome)
-        self.socketio.on_event('is_PIN_correct', self.on_is_PIN_correct)
-        self.socketio.on_event('server_secret_response',self.on_server_secret_response)
-        self.socketio.on_event('disconnect_client', self.on_disconnect_client)
-        self.socketio.on_event('secret_recieved_successfully',self.on_secret_recieved_successfully)
+        self.sio.on('server_welcome', self.on_server_welcome)
+        self.sio.on('is_PIN_correct', self.on_is_PIN_correct)
+        self.sio.on('server_secret_response',self.on_server_secret_response)
+        self.sio.on('disconnect_client', self.on_disconnect_client)
+        self.sio.on('secret_recieved_successfully',self.on_secret_recieved_successfully)
     
     def initilaizeConnection(self,server_ip_address,port):
         self.server_ip=server_ip_address
         self.port=port
-        self.socketio.connect(f'http://{server_ip_address}:{port}') # defined port --> to be decided later
+        self.sio.connect(f'http://{server_ip_address}:{port}') # defined port --> to be decided later
         
-    def initilaizeConnection(self,server_ip_address):
-        self.server_ip=server_ip_address
-        self.port=80
-        self.socketio.connect(f'http://{server_ip_address}')  #in this case default port is 80 (http comunication)
+    # def initilaizeConnection(self,server_ip_address):
+    #     self.server_ip=server_ip_address
+    #     self.port=80
+    #     self.sio.connect(f'http://{server_ip_address}')  #in this case default port is 80 (http comunication)
 
     def on_server_welcome(self):
-        self.sid_dict_client[request.sid]=connectionParametersClient(ip_address=self.server_ip,port=self.port)
-        self.socketio.emit('verificate_PIN',{'ip_address':self.ip,'pin' : 1234},to=request.sid)
+        self.sid_dict_client[self.sio.sid]=connectionParametersClient(ip_address=self.server_ip,port=self.port)
+        self.sio.emit('verificate_PIN',{'ip_address':self.ip,'pin' : 1234},to=self.sio.sid)
         
     def on_is_PIN_correct(self,data):
         msg=data.get('msg')
         p=generateExponent(5000)
-        self.sid_dict_client[request.sid].p=p
+        self.sid_dict_client[self.sio.sid].p=p
         secret_nr=generateExponent(p)
-        self.sid_dict_client[request.sid].secret_nr=secret_nr
+        self.sid_dict_client[self.sio.sid].secret_nr=secret_nr
         key=generateExponent(5000)
-        self.sid_dict_client[request.sid].key=key
+        self.sid_dict_client[self.sio.sid].key=key
         number=modularExponentation(key,secret_nr,p)
-        self.socketio.emit('on_estbilish_secret_start',{'coded_nr': number, 'p':p})
+        self.sio.emit('on_estbilish_secret_start',{'coded_nr': number, 'p':p})
         
     def on_server_secret_response(self,data):
         msg=int(data.get('msg'))
-        secret_nr=self.sid_dict_client[request.sid].secret_nr
-        p=self.sid_dict_client[request.sid].p
+        secret_nr=self.sid_dict_client[self.sio.sid].secret_nr
+        p=self.sid_dict_client[self.sio.sid].p
         response=modularExponentation(msg,(-1)*secret_nr,p)
-        self.socketio.emit('estabilish_secret_end',{'data': response},to=request.sid)
+        self.sio.emit('estabilish_secret_end',{'data': response},to=self.sio.sid)
         
     def on_secret_recieved_successfully(self):
         record=self.sid_dict_client[request.id]
         createRemote(record.ip_address,record.port,record.key)
     
     def on_disconnect_client():
-        app.logger.info("%s Server severed connection", request.sid)
+        app.logger.info("%s Server severed connection", self.sio.sid)
         
     def find_request_sid(self,ip_address):
         if self.sid_dict_client:
@@ -137,7 +141,3 @@ class serverEventsHandler():
         else:
             return 'Not in database'
         
-# Adding flask-socketIO extension to app
-port=os.getenv('FLASK_RUN_PORT')
-socket_server=serverEventsHandler("127.0.0.1", int(port))
-socket_server.run()        

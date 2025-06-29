@@ -4,23 +4,23 @@ from app.app import db
 
 @dataclass
 class connectionParameters:
-    ip_address: str
-    stage: int
-    secret_nr: int
-    p: int
-    is_auth: bool
-    is_paired: bool
-    port:int
+    ip_address: str =None
+    stage: int =None
+    secret_nr: int=None
+    p: int=None
+    is_auth: bool=None
+    is_paired: bool=None
+    port:int=None
     
 @dataclass
 class connectionParametersClient:
-    ip_address: str
-    secret_nr: int
-    p: int
-    key:int
-    is_auth: bool
-    is_paired: bool
-    port:int
+    ip_address: str=None
+    secret_nr: int=None
+    p: int=None
+    key:int=None
+    is_auth: bool =None
+    is_paired: bool=None
+    port:int=None
     
 def createRemote(address,port,secret):
     remote = Remote(

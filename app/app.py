@@ -4,8 +4,7 @@ from flask import Flask, render_template, request
 from werkzeug.debug import DebuggedApplication
 from app.database.models import *
 from app.components.testing.testService import *
-from app.components.pairing.serverEvents import socket_server
-
+# from app.components.pairing.serverEvents import serverEventsHandler
 
 
 # Flask quickstart:
@@ -64,6 +63,15 @@ def create_app():
     def page_not_found(e):
         return render_template('404.html'), 404
 
+    from app.components.pairing.serverEvents import serverEventsHandler
+    from flask_socketio import SocketIO
+
+    socketio=SocketIO(app)
+    app.socket_server=serverEventsHandler(socketio)
+
+
+    
+
 
     # Register blueprints (views)
     # https://flask.palletsprojects.com/en/3.0.x/blueprints/
@@ -80,9 +88,9 @@ def create_app():
     from .components.download.downloadController import bp as bp_download
     app.register_blueprint(bp_download)
 
-    from .components.pairing.pairingController import bp as bp_pairing
-    app.register_blueprint(bp_pairing)
-
+    from .components.pairing.serverEvents import bp as bp_server
+    app.register_blueprint(bp_server)
+        
     return app
 
 
