@@ -23,7 +23,7 @@ def strtserver():
 
 @bp.route('/test/strtserver/pair5001')
 def pair5001():
-    getSocketServer().initilaizeConnection('127.0.0.1',5001, app.app)
+    getSocketServer().initilaizeConnection('127.0.0.1',5001)
     return 'ok'
 
 @bp.route('/test/dbinit', methods=['GET'])

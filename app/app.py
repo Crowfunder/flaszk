@@ -103,6 +103,9 @@ def create_app():
 
     from .components.pairing.serverEvents import bp as bp_server
     app.register_blueprint(bp_server)
+    
+    from .components.pairing.pairingController import bp as bp_pairing
+    app.register_blueprint(bp_pairing)
         
     return app
 

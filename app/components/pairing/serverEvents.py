@@ -12,8 +12,7 @@ from .pairingConfig import *
 bp = Blueprint('bp_server', __name__)
 
 class serverEventsHandler():
-    def __init__(self,socketIO, flask_app):
-        self.flask_app = flask_app
+    def __init__(self,socketIO):
         self.socketIO= socketIO
         self.sio=socketio.Client()
         self.sid_dict_server={}
@@ -39,7 +38,6 @@ class serverEventsHandler():
         
     def on_connect(self):
         app.logger.info("%s Server connected with new client",request.sid)
-        print(self.server_port)
         self.socketIO.emit('server_welcome',{'port':str(self.server_port)},to=request.sid)
         
     def on_verificate_PIN(self,data):
@@ -109,9 +107,7 @@ class serverEventsHandler():
         self.sio.on('disconnect_client', self.on_disconnect_client)
         self.sio.on('secret_recieved_successfully',self.on_secret_recieved_successfully)
     
-    def initilaizeConnection(self,server_ip_address,port, client_app):
-        self.client_app = client_app
-        app.logger.info('mango')
+    def initilaizeConnection(self,server_ip_address,port):
         self.server_ip=server_ip_address
         self.port=port
         if not self.sio.connected:
@@ -122,14 +118,12 @@ class serverEventsHandler():
             self.sio.connect(f'http://{server_ip_address}:{port}', namespaces=['/'])
     
     def on_server_welcome(self,data):
-        app.logger.info('mango')
         port=data.get('port')
         self.sid_dict_client[self.sio.sid]=connectionParametersClient(ip_address=self.server_ip,port=port)
         self.sio.sleep(0.25)
         if self.sio.connected:
             self.sio.emit('verificate_PIN', {'ip_address':self.server_ip,'pin' : 1234,'port':str(self.server_port)})
-        else:
-            print('xyz')
+        
         
     def on_is_PIN_correct(self,data):
         msg=data.get('msg')
@@ -138,7 +132,6 @@ class serverEventsHandler():
         secret_nr=generateExponent(p,False)
         self.sid_dict_client[self.sio.sid].secret_nr=secret_nr
         key=generateExponent(KEY_GENERATING_LIMIT,True)
-        print(key)
         self.sid_dict_client[self.sio.sid].key=key
         number=modularExponentation(key,secret_nr,p)
         self.sio.emit('estabilish_secret_start',{'coded_nr': str(number), 'p':str(p)})
@@ -153,8 +146,7 @@ class serverEventsHandler():
         
     def on_secret_recieved_successfully(self):
         record=self.sid_dict_client[self.sio.sid]
-        with self.flask_app.app_context():
-            createRemote(record.ip_address,record.port,str(record.key))
+        createRemoteOnClient(record.ip_address,record.port,str(record.key))
     
     def on_disconnect_client(self):
         app.logger.info("%s Server severed connection", self.sio.sid)
@@ -171,5 +163,5 @@ class serverEventsHandler():
 def getSocketServer():
     if not app.socket_server:
         with app.app_context():
-            app.socket_server=serverEventsHandler(app.socketio, app)
+            app.socket_server=serverEventsHandler(app.socketio)
     return app.socket_server

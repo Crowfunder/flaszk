@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from app.database.models import Remote
 from app.app import db
+import requests
+import os
 
 @dataclass
 class connectionParameters:
@@ -22,6 +24,13 @@ class connectionParametersClient:
     is_paired: bool=None
     port:int=None
     
+    
+
+def createRemoteOnClient(address, port, secret):
+    local_port=os.getenv('FLASK_RUN_PORT')
+    requests.post(f"http://127.0.0.1:{local_port}/remotes/add", json={"address": address, "port": port, "secret": secret})
+
+
 def createRemote(address,port,secret):
     remote = Remote(
     address=address,
