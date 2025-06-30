@@ -2,11 +2,12 @@ import os
 import sys
 from flask import Flask, render_template
 from werkzeug.debug import DebuggedApplication
-from app.database.models import *
-from app.components.testing.testService import *
-from app.database.models import db
-from app.components.pairing.pin.pinManager import pin
 import logging
+
+from app.database.models import *
+from app.database.models import db
+from app.settings.settingsManager import settings
+from app.components.pairing.pin.pinManager import pin
 
 
 # Flask quickstart:
@@ -56,6 +57,8 @@ def create_app():
     
     app.socket_server = None
 
+    
+
     # https://flask-sqlalchemy.palletsprojects.com/en/3.1.x/quickstart/#configure-the-extension
     # Allow database path override via FLASK_DB_PATH env or --db-path argument
     db_path = os.environ.get("FLASK_DB_PATH")
@@ -83,9 +86,9 @@ def create_app():
 
     from app.components.pairing.serverEvents import serverEventsHandler
 
-
-    
-
+    # Initalize special components in app
+    app.pin = pin
+    app.settings = settings
 
     # Register blueprints (views)
     # https://flask.palletsprojects.com/en/3.0.x/blueprints/

@@ -1,0 +1,20 @@
+indexing:
+  metadata: True
+
+  file_types: 
+  - docx
+  - pdf
+  - epub
+  - txt
+  - odt
+  - rtf
+  - md
+
+  dirs:
+  - C:\\Users\\storm\\OneDrive\\Pulpit
+
+download:
+  download_ttl: 15
+
+network:
+  type: peerOnly
