@@ -10,18 +10,20 @@ from app.database.models import Remote, Document, DocumentMetadata, DocumentMirr
 from .testService import db_test, create_remote_5000, create_remote_5001, create_documents
 from app.database.schema.schemas import *
 import os
+from ..pairing.serverEvents import getSocketServer
 
 bp = Blueprint('bp_test', __name__)
+
 
 @bp.route('/test/strtserver')
 def strtserver():
     port=os.getenv('FLASK_RUN_PORT')
-    current_app.socket_server.run('127.0.0.1',port)
+    getSocketServer().run('127.0.0.1',port)
     return 'ok'
 
 @bp.route('/test/strtserver/pair5001')
 def pair5001():
-    current_app.socket_server.initilaizeConnection('127.0.0.1',5001)
+    getSocketServer().initilaizeConnection('127.0.0.1',5001, app.app)
     return 'ok'
 
 @bp.route('/test/dbinit', methods=['GET'])

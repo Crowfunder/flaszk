@@ -4,6 +4,7 @@ from flask import Flask, render_template, request
 from werkzeug.debug import DebuggedApplication
 from app.database.models import *
 from app.components.testing.testService import *
+import logging
 # from app.components.pairing.serverEvents import serverEventsHandler
 
 
@@ -28,7 +29,9 @@ def create_app():
 
     # Load config from file config.py
     app.config.from_pyfile('config.py')
-
+    
+    #setting log level
+    app.logger.setLevel(logging.INFO)
 
     # Keep static files path in app config
     app.config["STATIC_FOLDER"] = STATIC_FOLDER
@@ -46,11 +49,25 @@ def create_app():
     except OSError:
         pass
 
+    from flask_socketio import SocketIO
+    socketio=SocketIO(app, cors_allowed_origins='*')
+    app.socketio = socketio
     
-    
+    app.socket_server = None
 
     # https://flask-sqlalchemy.palletsprojects.com/en/3.1.x/quickstart/#configure-the-extension
-    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.getcwd()}/instance/database.sqlite"
+    # Allow database path override via FLASK_DB_PATH env or --db-path argument
+    db_path = os.environ.get("FLASK_DB_PATH")
+    if not db_path:
+        # Check for --db-path in sys.argv
+        for idx, arg in enumerate(sys.argv):
+            if arg == "--db-path" and idx + 1 < len(sys.argv):
+                db_path = sys.argv[idx + 1]
+                break
+    if not db_path:
+        db_path = f"{os.getcwd()}/instance/database.sqlite"
+
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
     db.init_app(app)
 
     # Comment out for double-hosted tests
@@ -64,10 +81,6 @@ def create_app():
         return render_template('404.html'), 404
 
     from app.components.pairing.serverEvents import serverEventsHandler
-    from flask_socketio import SocketIO
-
-    socketio=SocketIO(app)
-    app.socket_server=serverEventsHandler(socketio)
 
 
     
