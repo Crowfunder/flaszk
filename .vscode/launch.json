@@ -30,13 +30,13 @@
             "env": {
                 "FLASK_APP": "app/app.py",
                 "FLASK_DEBUG": "1",
-                "FLASK_DB_PATH": "${workspaceFolder}/instance/database1.sqlite"
+                "FLASK_DB_PATH": "${workspaceFolder}/instance/database1.sqlite",
+                "FLASK_RUN_PORT": "5000"
             },
             "args": [
                 "run",
                 "--no-debugger",
-                "--no-reload",
-                "--port=5000"
+                "--no-reload"
             ],
             "jinja": true,
             "autoStartBrowser": false
@@ -49,13 +49,13 @@
             "env": {
                 "FLASK_APP": "app/app.py",
                 "FLASK_DEBUG": "0",
-                "FLASK_DB_PATH": "${workspaceFolder}/instance/database2.sqlite"
+                "FLASK_DB_PATH": "${workspaceFolder}/instance/database2.sqlite",
+                "FLASK_RUN_PORT": "5001"
             },
             "args": [
                 "run",
                 "--no-debugger",
-                "--no-reload",
-                "--port=5001"
+                "--no-reload"
             ],
             "jinja": true,
             "autoStartBrowser": false

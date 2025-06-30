@@ -4,4 +4,7 @@ Flask-SQLAlchemy
 Werkzeug
 flask-marshmallow
 requests
+sympy
+python-socketio
+python-socketio[client]
 pyotp

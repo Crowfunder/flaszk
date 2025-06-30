@@ -8,10 +8,22 @@ from app.app import db, pin
 from app.database.models import Remote, Document, DocumentMetadata, DocumentMirror
 from .testService import db_test, create_remote_5000, create_remote_5001, create_documents
 from app.database.schema.schemas import *
+import os
+from ..pairing.serverEvents import getSocketServer
 
 bp = Blueprint('bp_test', __name__)
 
 
+@bp.route('/test/strtserver')
+def strtserver():
+    port=os.getenv('FLASK_RUN_PORT')
+    getSocketServer().run('127.0.0.1',port)
+    return 'ok'
+
+@bp.route('/test/strtserver/pair5001')
+def pair5001():
+    getSocketServer().initilaizeConnection('127.0.0.1',5001)
+    return 'ok'
 
 @bp.route('/test/dbinit', methods=['GET'])
 def dbinit():

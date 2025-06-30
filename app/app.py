@@ -2,9 +2,11 @@ import os
 import sys
 from flask import Flask, render_template
 from werkzeug.debug import DebuggedApplication
-
+from app.database.models import *
+from app.components.testing.testService import *
 from app.database.models import db
 from app.components.pairing.pin.pinManager import pin
+import logging
 
 
 # Flask quickstart:
@@ -28,7 +30,9 @@ def create_app():
 
     # Load config from file config.py
     app.config.from_pyfile('config.py')
-
+    
+    #setting log level
+    app.logger.setLevel(logging.INFO)
 
     # Keep static files path in app config
     app.config["STATIC_FOLDER"] = STATIC_FOLDER
@@ -46,8 +50,13 @@ def create_app():
     except OSError:
         pass
 
+    from flask_socketio import SocketIO
+    socketio=SocketIO(app, cors_allowed_origins='*')
+    app.socketio = socketio
+    
+    app.socket_server = None
 
-
+    # https://flask-sqlalchemy.palletsprojects.com/en/3.1.x/quickstart/#configure-the-extension
     # Allow database path override via FLASK_DB_PATH env or --db-path argument
     db_path = os.environ.get("FLASK_DB_PATH")
     if not db_path:
@@ -72,6 +81,11 @@ def create_app():
     def page_not_found(e):
         return render_template('404.html'), 404
 
+    from app.components.pairing.serverEvents import serverEventsHandler
+
+
+    
+
 
     # Register blueprints (views)
     # https://flask.palletsprojects.com/en/3.0.x/blueprints/
@@ -88,14 +102,11 @@ def create_app():
     from .components.download.downloadController import bp as bp_download
     app.register_blueprint(bp_download)
 
+    from .components.pairing.serverEvents import bp as bp_server
+    app.register_blueprint(bp_server)
+    
     from .components.pairing.pairingController import bp as bp_pairing
     app.register_blueprint(bp_pairing)
-
-    from .components.index.indexController import bp as bp_index
-    app.register_blueprint(bp_index)
-
-    from .components.client.clientController import bp as bp_client
-    app.register_blueprint(bp_client)
 
     return app
 
