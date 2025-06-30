@@ -1,11 +1,12 @@
 import os
 import sys
-from flask import Flask, render_template, request
+from flask import Flask, render_template
 from werkzeug.debug import DebuggedApplication
 from app.database.models import *
 from app.components.testing.testService import *
+from app.database.models import db
+from app.components.pairing.pin.pinManager import pin
 import logging
-# from app.components.pairing.serverEvents import serverEventsHandler
 
 
 # Flask quickstart:
@@ -106,7 +107,7 @@ def create_app():
     
     from .components.pairing.pairingController import bp as bp_pairing
     app.register_blueprint(bp_pairing)
-        
+
     return app
 
 

@@ -25,6 +25,25 @@ class DocumentMetadata(db.Model):
 
     Id = db.Column(db.Integer, primary_key=True)
     document_hash = db.Column(db.String, db.ForeignKey('documents.file_hash', ondelete='CASCADE'), nullable=False)
+    file_name = db.Column(db.String, nullable=True)
+    title = db.Column(db.String, nullable=True)
+    author = db.Column(db.String, nullable=True)
+    date = db.Column(db.DateTime, nullable=True)
+
+    def merge(self, remote_metadata):
+        '''
+        Takes external metadata and merges it into self
+        only by filling blank fields.
+        '''
+        if not self.file_name and remote_metadata.file_name:
+            self.file_name = remote_metadata.file_name
+        if not self.title and remote_metadata.title:
+            self.title = remote_metadata.title
+        if not self.author and remote_metadata.author:
+            self.author = remote_metadata.author
+        if not self.date and remote_metadata.date:
+            self.date = remote_metadata.date
+
 
 @dataclass
 class Document(db.Model):

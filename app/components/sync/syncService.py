@@ -1,8 +1,9 @@
 from flask import current_app
 from sqlalchemy import select
+from marshmallow import ValidationError
 
 from app.database.models import Remote, Document, DocumentMetadata, DocumentMirror
-from app.database.schema.schemas import DocumentSchema
+from app.database.schema.schemas import SharedDocumentSchema, DocumentMetadataSchema
 from app.app import db
 from .syncConfig import SERVER_SYNC_ENDPOINT
 from ..utils.remoteUtils import checkIfRemoteUp
@@ -25,7 +26,12 @@ def syncWithRemote(remote: Remote):
     response_json = remoteSendGetWithSecret(remote, SERVER_SYNC_ENDPOINT).json()
     for document in response_json:
         document_hash = document['file_hash']
-        importRemoteDocument(document_hash, remote)
+        document_metadata_json = document['document_metadata'][0]
+        try:
+            document_metadata = DocumentMetadataSchema().load(document_metadata_json)
+        except ValidationError as err:
+            document_metadata = DocumentMetadata(document_hash=document_hash)
+        importRemoteDocument(document_hash, remote, document_metadata)
 
 
 def syncWithAll():
@@ -43,7 +49,7 @@ def syncWithAll():
         if checkIfRemoteUp(remote):
             try:
                 syncWithRemote(remote)
-            except:
+            except Exception as e:
                 continue
 
 
@@ -55,4 +61,4 @@ def exportLocalDocuments():
         list: A list of serialized local Document objects using DocumentSchema.
     """
     documents = Document.query.filter_by(is_local=True)
-    return DocumentSchema(many=True).dump(documents)
+    return SharedDocumentSchema(many=True).dump(documents)
