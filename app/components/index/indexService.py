@@ -2,7 +2,6 @@ import os
 import os.path
 import datetime
 
-from .indexConfig import INDEXED_EXTS, INDEXED_PATHS
 from app.database.models import DocumentMetadata, Document, DocumentMirror
 from app.app import db, settings
 from ..utils.documentUtils import importLocalDocument
