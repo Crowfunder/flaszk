@@ -4,24 +4,30 @@ import datetime
 
 from .indexConfig import INDEXED_EXTS, INDEXED_PATHS
 from app.database.models import DocumentMetadata, Document, DocumentMirror
-from app.app import db
+from app.app import db, settings
 from ..utils.documentUtils import importLocalDocument
 from ..utils.fileUtils import checkIfFileExists
 
+INDEXED_EXTS = settings.indexing.file_types
+INDEXED_PATHS = settings.indexing.dirs
+PARSE_METADATA = settings.indexing.metadata
 
 def initalizeParserDict():
-    from .parsers.parser_docx import DocxParser
-    from .parsers.parser_pdf import PdfParser
-    from .parsers.parser_epub import EpubParser
-
-    docx = DocxParser()
-    pdf = PdfParser()
-    epub = EpubParser()
-
+    
     parsers = {}
-    parsers[docx.get_ext()] = docx
-    parsers[pdf.get_ext()] = pdf
-    parsers[epub.get_ext()] = epub
+
+    if PARSE_METADATA:
+        from .parsers.parser_docx import DocxParser
+        from .parsers.parser_pdf import PdfParser
+        from .parsers.parser_epub import EpubParser
+
+        docx = DocxParser()
+        pdf = PdfParser()
+        epub = EpubParser()
+
+        parsers[docx.get_ext()] = docx
+        parsers[pdf.get_ext()] = pdf
+        parsers[epub.get_ext()] = epub
 
     return parsers
 
@@ -62,17 +68,18 @@ def parseDocumentMetadata(document: Document, parsers: dict):
     metadata.date = getFileModDate(file_path)
 
     # Parse format-specific metadata
-    file_ext = getFileExtension(file_path)
-    if file_ext:
-        try:
-            parser = parsers[file_ext]
-            metadata_parsed = parser(file_path)
-            metadata.title = metadata_parsed.title
-            metadata.author = metadata_parsed.author
-        except KeyError:
-            pass
+    if PARSE_METADATA:
+        file_ext = getFileExtension(file_path)
+        if file_ext:
+            try:
+                parser = parsers[file_ext]
+                metadata_parsed = parser(file_path)
+                metadata.title = metadata_parsed.title
+                metadata.author = metadata_parsed.author
+            except KeyError:
+                pass
 
-    db.session.commit()
+        db.session.commit()
 
     
 def list_all_files(directory_path: str):

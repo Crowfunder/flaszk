@@ -5,6 +5,8 @@ Werkzeug
 flask-marshmallow
 requests
 sympy
+flask_socketio
 python-socketio
 python-socketio[client]
 pyotp
+PyYAML
