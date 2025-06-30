@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<div class="settings-card">
+    <h2>Pair with Remote</h2>
+    <form class="pairing-form" method="post" action="{{ url_for('start_pairing') }}">
+        <input type="text" name="ip_address" placeholder="IP Address" required>
+        <input type="number" name="port" placeholder="Port" required>
+        <input type="text" name="pin" placeholder="Verification PIN" required>
+        <button type="submit">Start Pairing</button>
+    </form>
+    <div class="pairing-info">
+        <h3>Your Pairing Info</h3>
+        <p><b>IP:</b> {{ my_ip }}</p>
+        <p><b>Port:</b> {{ my_port }}</p>
+        <p><b>PIN:</b> {{ my_pin }}</p>
+    </div>
+</div>
+<div class="connection-logs">
+    {% for log in connection_logs %}
+        {{ log }}<br>
+    {% endfor %}
+</div>
+{% endblock %}
