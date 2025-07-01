@@ -5,8 +5,8 @@
 <div class="index-grid">
     {% for doc in documents %}
     <div class="doc-card" onclick="window.location='{{ url_for('bp_client.document_detail', file_hash=doc.file_hash) }}'">
-        <img src="{{ url_for('static', filename='thumbnails/' ~ doc.file_hash ~ '.png') }}" class="doc-thumb" alt="First page" onerror="this.src='{{ url_for('static', filename='default_thumb.png') }}'">
-        <div class="doc-title">{{ doc.document_metadata[0].title or 'Untitled' }}</div>
+        <img src="{{ url_for('static', filename='thumbnails/' ~ doc.file_hash ~ '.png') }}" class="doc-thumb" alt="First page" onerror="this.src='{{ url_for('static', filename='default_thumb.jpg') }}'">
+        <div class="doc-title">{{ doc.document_metadata[0].title or doc.document_metadata[0].file_name }}</div>
     </div>
     {% endfor %}
 </div>

@@ -2,7 +2,7 @@
 {% block title %}{{ document.document_metadata[0].title or 'Document Detail' }}{% endblock %}
 {% block content %}
 <div class="detail-container">
-    <img src="{{ url_for('static', filename='thumbnails/' ~ document.file_hash ~ '.png') }}" class="detail-thumb" alt="First page" onerror="this.src='{{ url_for('static', filename='default_thumb.png') }}'">
+    <img src="{{ url_for('static', filename='thumbnails/' ~ document.file_hash ~ '.png') }}" class="detail-thumb" alt="First page" onerror="this.src='{{ url_for('static', filename='default_thumb.jpg') }}'">
     <div class="detail-meta">
         <h2>{{ document.document_metadata[0].title or 'Untitled' }}</h2>
         <p><b>Author:</b> {{ document.document_metadata[0].author or 'Unknown' }}</p>
@@ -11,7 +11,8 @@
         <p><b>Hash:</b> {{ document.file_hash }}</p>
     </div>
 </div>
-<form method="post" action="{{ url_for('bp_download.clientDownload', file=document.file_hash) }}">
-    <button class="download-btn" title="Download">&#x2B07;</button>
+<form method="get" action="{{ url_for('bp_download.clientDownload') }}">
+    <input type="hidden" name="file" value="{{ document.file_hash }}">
+    <button type="submit" class="download-btn" title="Download">&#x2B07;</button>
 </form>
 {% endblock %}

@@ -3,13 +3,13 @@ import os.path
 import datetime
 
 from app.database.models import DocumentMetadata, Document, DocumentMirror
-from app.app import db, settings
+from app.app import db, settingsManager
 from ..utils.documentUtils import importLocalDocument
 from ..utils.fileUtils import checkIfFileExists
 
-INDEXED_EXTS = settings.indexing.file_types
-INDEXED_PATHS = settings.indexing.dirs
-PARSE_METADATA = settings.indexing.metadata
+INDEXED_EXTS = settingsManager.indexing.file_types
+INDEXED_PATHS = settingsManager.indexing.dirs
+PARSE_METADATA = settingsManager.indexing.metadata
 
 def initalizeParserDict():
     

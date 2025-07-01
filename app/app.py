@@ -6,7 +6,7 @@ import logging
 
 from app.database.models import *
 from app.database.models import db
-from app.settings.settingsManager import settings
+from app.settings.settingsManager import settingsManager
 from app.components.pairing.pin.pinManager import pin
 
 
@@ -17,8 +17,7 @@ from app.components.pairing.pin.pinManager import pin
 
 def create_app():
     
-    # Static files (e.g. css, js, images) will be stored one level up, in the ~/public_html directory
-    STATIC_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'public_html'))
+    STATIC_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), 'static'))
 
 
     # Create and configure the app
@@ -88,7 +87,7 @@ def create_app():
 
     # Initalize special components in app
     app.pin = pin
-    app.settings = settings
+    app.settings = settingsManager
 
     # Register blueprints (views)
     # https://flask.palletsprojects.com/en/3.0.x/blueprints/
@@ -104,6 +103,9 @@ def create_app():
 
     from .components.download.downloadController import bp as bp_download
     app.register_blueprint(bp_download)
+    
+    from .components.index.indexController import bp as bp_index
+    app.register_blueprint(bp_index)
 
     from .components.pairing.serverEvents import bp as bp_server
     app.register_blueprint(bp_server)

@@ -9,10 +9,10 @@
     <div class="navbar">
         <a href="{{ url_for('bp_client.home') }}" class="navbar-brand">DocLib</a>
         <div class="navbar-circles">
-            <form method="post" action="{{ url_for('bp_client.sync') }}">
+            <form method="get" action="{{ url_for('bp_sync.clientSyncAll') }}">
                 <button type="submit" class="circle-btn" title="Sync">&#x21bb;</button>
             </form>
-            <form method="post" action="{{ url_for('bp_client.index_docs') }}">
+            <form method="get" action="{{ url_for('bp_index.clientIndexing') }}">
                 <button type="submit" class="circle-btn" title="Index">&#x2795;</button>
             </form>
         </div>

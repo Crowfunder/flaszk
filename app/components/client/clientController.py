@@ -1,4 +1,5 @@
 from flask import Blueprint, request, current_app, g, render_template, flash, redirect, url_for, jsonify, Response
+from app.settings.settingsManager import settingsManager
 
 from app.database.models import Document, DocumentMetadata, DocumentMirror, Remote
 from app.database.schema.schemas import LocalDocumentSchema, DocumentMirrorSchema
@@ -8,7 +9,6 @@ from app.components.pairing.pin.pinManager import pin
 
 bp = Blueprint('bp_client', __name__)
 
-# Example additions to app.py or a blueprint
 
 @bp.route('/')
 def home():
@@ -23,27 +23,31 @@ def document_detail(file_hash):
 
 @bp.route('/settings', methods=['GET', 'POST'])
 def settings():
-    # Handle pairing form and logs
-    my_ip = '127.0.0.1'  # Replace with actual logic
-    my_port = 5000       # Replace with actual logic
-    my_pin = pin.get_pin()  # Use your pin manager
-    connection_logs = []    # Replace with actual logs
+    my_ip = '127.0.0.1'
+    my_port = 5000
+    my_pin = pin.get_pin()
+    connection_logs = []
+
     if request.method == 'POST':
-        # Handle pairing logic
-        ...
-    return render_template('settings.html', my_ip=my_ip, my_port=my_port, my_pin=my_pin, connection_logs=connection_logs)
+        # Handle settings update for both simple and list fields
+        form_data = request.form.to_dict(flat=False)
+        settingsManager.update_from_dict(form_data)
+        return redirect(url_for('bp_client.settings'))
 
-@bp.route('/sync', methods=['POST'])
-def sync():
-    # Call your sync logic
-    ...
-    return redirect(url_for('home'))
+    return render_template(
+        'settings.html',
+        settings_dict=settingsManager.as_nested_dict(),
+        my_ip=my_ip,
+        my_port=my_port,
+        my_pin=my_pin,
+        connection_logs=connection_logs
+    )
 
-@bp.route('/index_docs', methods=['POST'])
-def index_docs():
-    # Call your indexing logic
-    ...
-    return redirect(url_for('home'))
+@bp.route('/settings/restore', methods=['POST'])
+def restore_settings():
+    settingsManager.restore_defaults()
+    return redirect(url_for('bp_settings.settings'))
+
 
 # TODO: Secure with @login_required !!!!
 @bp.route(CLIENT_DOCUMENT_ENDPOINT, methods=['GET'])

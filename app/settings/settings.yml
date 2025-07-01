@@ -1,7 +1,10 @@
+download:
+  download_ttl: 15
 indexing:
-  metadata: True
-
-  file_types: 
+  dirs:
+  - C:\\Users\\storm\\OneDrive\\Pulpit
+  - C:\\Users\\solic\\Documents\\PDF
+  file_types:
   - docx
   - pdf
   - epub
@@ -9,12 +12,6 @@ indexing:
   - odt
   - rtf
   - md
-
-  dirs:
-  - C:\\Users\\storm\\OneDrive\\Pulpit
-
-download:
-  download_ttl: 15
-
+  metadata: true
 network:
   type: peerOnly

@@ -47,5 +47,34 @@ class SettingsManager:
     def __getattr__(self, item):
         return getattr(self.settings, item)
     
+    def as_flat_dict(self):
+        """Return settings as a flat dict for form rendering."""
+        def flatten(ns, prefix=''):
+            items = {}
+            for k, v in vars(ns).items():
+                if isinstance(v, SimpleNamespace):
+                    items.update(flatten(v, f"{prefix}{k}_"))
+                else:
+                    items[f"{prefix}{k}"] = v
+            return items
+        return flatten(self.settings)
 
-settings = SettingsManager('app/settings/settings.yml')
+    def update_from_dict(self, d):
+        """Update settings from a nested dict (including lists)."""
+        def set_nested(ns, key, value):
+            if isinstance(value, list):
+                setattr(ns, key, value)
+            elif isinstance(value, dict):
+                for k, v in value.items():
+                    set_nested(getattr(ns, key), k, v)
+            else:
+                setattr(ns, key, value)
+        for k, v in d.items():
+            if hasattr(self.settings, k):
+                set_nested(self.settings, k, v)
+        self.save_settings()
+    
+    def as_nested_dict(self):
+        return self._namespace_to_dict(self.settings)
+
+settingsManager = SettingsManager('app/settings/settings.yml')

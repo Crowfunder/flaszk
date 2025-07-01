@@ -1,9 +1,48 @@
+{% macro render_settings(settings, prefix='') %}
+    {% for key, value in settings.items() %}
+        {% if value is string or value is number %}
+            <div class="setting-row">
+                <label for="{{ prefix ~ key }}">{{ key|capitalize }}</label>
+                <input type="text" name="{{ prefix ~ key }}" id="{{ prefix ~ key }}" value="{{ value }}">
+            </div>
+        {% elif value is mapping %}
+            <fieldset class="setting-group">
+                <legend>{{ key|capitalize }}</legend>
+                {{ render_settings(value, prefix ~ key ~ '_') }}
+            </fieldset>
+        {% elif value is sequence %}
+            <div class="setting-row">
+                <label>{{ key|capitalize }}</label>
+                <ul id="{{ prefix ~ key }}_list">
+                    {% for item in value %}
+                        <li>
+                            <input type="text" name="{{ prefix ~ key }}_{{ loop.index0 }}" value="{{ item }}">
+                            <button type="button" onclick="removeListItem(this)">Remove</button>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <button type="button" onclick="addListItem('{{ prefix ~ key }}_list', '{{ prefix ~ key }}')">Add</button>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
 {% extends 'base.html' %}
 {% block title %}Settings{% endblock %}
 {% block content %}
 <div class="settings-card">
+    <h2>Application Settings</h2>
+    <form class="settings-form" method="post" action="{{ url_for('bp_client.settings') }}">
+        {{ render_settings(settings_dict) }}
+        <button type="submit">Save Settings</button>
+    </form>
+    <form method="post" action="{{ url_for('bp_client.restore_settings') }}">
+        <button type="submit" style="margin-top:10px;">Restore Default Settings</button>
+    </form>
+</div>
+<div class="settings-card">
     <h2>Pair with Remote</h2>
-    <form class="pairing-form" method="post" action="{{ url_for('start_pairing') }}">
+    <form class="pairing-form" method="post" action="">
         <input type="text" name="ip_address" placeholder="IP Address" required>
         <input type="number" name="port" placeholder="Port" required>
         <input type="text" name="pin" placeholder="Verification PIN" required>
@@ -21,4 +60,16 @@
         {{ log }}<br>
     {% endfor %}
 </div>
+<script>
+function addListItem(listId, namePrefix) {
+    var ul = document.getElementById(listId);
+    var idx = ul.children.length;
+    var li = document.createElement('li');
+    li.innerHTML = `<input type="text" name="${namePrefix}_${idx}" value=""><button type="button" onclick="removeListItem(this)">Remove</button>`;
+    ul.appendChild(li);
+}
+function removeListItem(btn) {
+    btn.parentElement.remove();
+}
+</script>
 {% endblock %}
