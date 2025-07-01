@@ -3,6 +3,7 @@ from app.database.models import Remote
 from app.app import db
 import requests
 import os
+import re
 
 @dataclass
 class connectionParameters:
@@ -25,6 +26,12 @@ class connectionParametersClient:
     port:int=None
     
     
+
+def validateIp(ip):
+    pattern = re.compile(r"^\d{1,3}(\.\d{1,3}){3}$")
+    if not pattern.match(ip):
+        return False
+    return True
 
 def createRemoteOnClient(address, port, secret):
     local_port=os.getenv('FLASK_RUN_PORT')

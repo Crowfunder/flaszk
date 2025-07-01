@@ -52,7 +52,7 @@ class serverEventsHandler():
         else:
             app.logger.info("%sPIN veirfication unsuccessfull",request.sid)
             self.socketIO.send('disconnect_client', to=request.sid)
-            self.socketIO.disconnect(request.sid)
+            disconnect(request.sid)
                 
     def on_estabilish_secret_start(self,data):
         if self.sid_dict_server[request.sid].stage == 1:
@@ -96,6 +96,8 @@ class serverEventsHandler():
         app.logger.info("%s Server disconnected", request.sid)
         del self.sid_dict_server[request.sid]
         
+        
+        
     #####################################################################
     # C L I E N T 
     #####################################################################
@@ -108,9 +110,10 @@ class serverEventsHandler():
         self.sio.on('disconnect_client', self.on_disconnect_client)
         self.sio.on('secret_recieved_successfully',self.on_secret_recieved_successfully)
     
-    def initilaizeConnection(self,server_ip_address,port):
+    def initilaizeConnection(self,server_ip_address,port,pin):
         self.server_ip=server_ip_address
         self.port=port
+        self.pin=pin
         if not self.sio.connected:
             self.sio.connect(f'http://{server_ip_address}:{port}', namespaces=['/']) # defined port --> to be decided later
         else:
@@ -123,7 +126,7 @@ class serverEventsHandler():
         self.sid_dict_client[self.sio.sid]=connectionParametersClient(ip_address=self.server_ip,port=port)
         self.sio.sleep(0.25)
         if self.sio.connected:
-            self.sio.emit('verificate_PIN', {'ip_address':self.server_ip,'pin' : 1234,'port':str(self.server_port)})
+            self.sio.emit('verificate_PIN', {'ip_address':self.server_ip,'pin' : self.pin,'port':str(self.server_port)})
         
         
     def on_is_PIN_correct(self,data):
@@ -148,6 +151,7 @@ class serverEventsHandler():
     def on_secret_recieved_successfully(self):
         record=self.sid_dict_client[self.sio.sid]
         createRemoteOnClient(record.ip_address,record.port,str(record.key))
+        self.sio.disconnect()
     
     def on_disconnect_client(self):
         app.logger.info("%s Server severed connection", self.sio.sid)

@@ -1,11 +1,12 @@
-from flask import Blueprint, request, jsonify
-from flask import current_app
-from flask_socketio import SocketIO
-from .serverEvents import serverEventsHandler
+from flask import Blueprint, request, jsonify,flash,redirect,url_for
+from flask import current_app, session
 from app.database.models import Remote, db
 from app.database.schema.schemas import RemoteSchema
 from ..pairing.serverEvents import getSocketServer
-
+import os, re, socket
+from .pin.pinManager import pin as pin_class_instance
+from ..utils.netUtils import checkIfHostUp
+from .funcLibrary import validateIp
 
 bp = Blueprint('bp_pairing', __name__)
 
@@ -32,6 +33,8 @@ def importRemote(address, port, secret):
 
 REMOTE_ADD_ENDPOINT = '/remotes/add'
 START_PAIRING_ENDPOINT='/settings/start_pairing'
+START_SERVER_ENDPOINT='/settings/start_server'
+STOP_SERVER_ENDPOINT='/settings/stop_server'
 
 # TODO: Secure with @login_required !!!!
 @bp.route(REMOTE_ADD_ENDPOINT, methods=['POST'])
@@ -51,5 +54,41 @@ def startPairing():
     port=request.form['port']
     pin=request.form['pin']
     
+    if not validateIp(ip):
+        flash("Wrong IP address format given")
+        return redirect(url_for('bp_client.settings'))
+    if not port.isdigit() or not (1024 <= int(port) <= 65535):
+        flash("Port must be a number between 1024 and 65535")
+        return redirect(url_for('bp_client.settings'))
+    if not re.match(r"^\d{6}$", pin):
+        flash("PIN must be a 6-digit number")
+        return redirect(url_for('bp_client.settings'))
+    
+    if not checkIfHostUp(ip,port):
+        flash("Host you are trying to connect is busy. Try again later.")
+        return redirect(url_for('bp_client.settings'))
+    
+    getSocketServer().initilaizeConnection(ip,port,pin)
+    flash("Pairing started successfully")
+    return redirect(url_for('bp_client.settings'))
 
-    return 'pairing started', 200
+@bp.route(START_SERVER_ENDPOINT, methods=['GET'])
+def startServer():
+    port = os.getenv('FLASK_RUN_PORT')
+    getSocketServer().run('0.0.0.0', port)
+    import time
+    time.sleep(0.25)
+    my_ip = socket.gethostbyname_ex(socket.gethostname())[-1]
+    my_port = port
+    my_pin = pin_class_instance.get_pin()
+    # Store in session
+    session['pairing_info'] = {'my_ip': my_ip, 'my_port': my_port, 'my_pin': my_pin}
+    return jsonify({'my_ip': my_ip, 'my_port': my_port, 'my_pin': my_pin}), 200
+
+@bp.route(STOP_SERVER_ENDPOINT, methods=['POST'])
+def stopServer():
+    # Call your server disconnect logic
+    socketServer = getSocketServer()
+    del socketServer
+    session.pop('pairing_info',None)
+    return redirect(url_for('bp_client.settings'))

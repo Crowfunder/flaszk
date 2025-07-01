@@ -19,7 +19,8 @@ bp = Blueprint('bp_sync', __name__)
 @bp.route(CLIENT_SYNC_ENDPOINT, methods=['GET'])
 def clientSyncAll():
     syncWithAll()
-    return 'synced', 200
+    flash("Finished syncing", 'info')
+    return redirect(request.referrer)
 
 
 # Receive synchronization request from other remote

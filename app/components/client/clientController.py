@@ -1,4 +1,4 @@
-from flask import Blueprint, request, current_app, g, render_template, flash, redirect, url_for, jsonify, Response
+from flask import Blueprint, request, current_app, g, render_template, flash, redirect, url_for, jsonify, Response, session
 from app.settings.settingsManager import settingsManager
 
 from app.database.models import Document, DocumentMetadata, DocumentMirror, Remote
@@ -23,9 +23,6 @@ def document_detail(file_hash):
 
 @bp.route('/settings', methods=['GET', 'POST'])
 def settings():
-    my_ip = '127.0.0.1'
-    my_port = 5000
-    my_pin = pin.get_pin()
     connection_logs = []
 
     if request.method == 'POST':
@@ -34,13 +31,12 @@ def settings():
         settingsManager.update_from_dict(form_data)
         return redirect(url_for('bp_client.settings'))
 
+    pairing_info = session.get('pairing_info')
     return render_template(
         'settings.html',
         settings_dict=settingsManager.as_nested_dict(),
-        my_ip=my_ip,
-        my_port=my_port,
-        my_pin=my_pin,
-        connection_logs=connection_logs
+        connection_logs=connection_logs,
+        pairing_info=pairing_info,
     )
 
 @bp.route('/settings/restore', methods=['POST'])

@@ -2,6 +2,7 @@ from flask import Blueprint, request, current_app, g, render_template, flash, re
 from sqlalchemy import select
 from sqlalchemy.exc import OperationalError
 import datetime
+from time import sleep
 
 
 from app.app import db, pin
@@ -17,7 +18,7 @@ bp = Blueprint('bp_test', __name__)
 @bp.route('/test/strtserver')
 def strtserver():
     port=os.getenv('FLASK_RUN_PORT')
-    getSocketServer().run('127.0.0.1',port)
+    getSocketServer().run('0.0.0.0',port)
     return 'ok'
 
 @bp.route('/test/strtserver/pair5001')

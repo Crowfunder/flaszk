@@ -1,5 +1,5 @@
 # https://flask.palletsprojects.com/en/3.0.x/config/#SECRET_KEY
-SECRET_KEY = ''  # does not matter - for lab only
+SECRET_KEY = 'your-very-secret-key-here'  # does not matter - for lab only
                     # remember to change it if app is working in the production environment!!!
 
 JSON_SORT_KEYS = False
