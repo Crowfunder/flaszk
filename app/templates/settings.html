@@ -21,7 +21,7 @@
                         </li>
                     {% endfor %}
                 </ul>
-                <button type="button" onclick="addListItem('{{ prefix ~ key }}_list', '{{ prefix ~ key }}')">Add</button>
+                <button type="button" style="margin-bottom:10px;"onclick="addListItem('{{ prefix ~ key }}_list', '{{ prefix ~ key }}')">Add</button>
             </div>
         {% endif %}
     {% endfor %}
@@ -30,35 +30,41 @@
 {% extends 'base.html' %}
 {% block title %}Settings{% endblock %}
 {% block content %}
-<div class="settings-card">
-    <h2>Application Settings</h2>
-    <form class="settings-form" method="post" action="{{ url_for('bp_client.settings') }}">
-        {{ render_settings(settings_dict) }}
-        <button type="submit">Save Settings</button>
-    </form>
-    <form method="post" action="{{ url_for('bp_client.restore_settings') }}">
-        <button type="submit" style="margin-top:10px;">Restore Default Settings</button>
-    </form>
-</div>
-<div class="settings-card">
-    <h2>Pair with Remote</h2>
-    <form class="pairing-form" method="post" action="">
-        <input type="text" name="ip_address" placeholder="IP Address" required>
-        <input type="number" name="port" placeholder="Port" required>
-        <input type="text" name="pin" placeholder="Verification PIN" required>
-        <button type="submit">Start Pairing</button>
-    </form>
-    <div class="pairing-info">
-        <h3>Your Pairing Info</h3>
-        <p><b>IP:</b> {{ my_ip }}</p>
-        <p><b>Port:</b> {{ my_port }}</p>
-        <p><b>PIN:</b> {{ my_pin }}</p>
+<div class="settings-layout">
+    <div class="settings-card">
+        <h2>Application Settings</h2>
+        <form class="settings-form" method="post" action="{{ url_for('bp_client.settings') }}">
+            {{ render_settings(settings_dict) }}
+            <button type="submit" style="margin-top:10px;">Save Settings</button>
+        </form>
+        <form method="post" action="{{ url_for('bp_client.restore_settings') }}">
+            <button type="submit" style="margin-top:10px;">Restore Default Settings</button>
+        </form>
+    </div>
+    <div class="vertical-flex">
+    <div class="pairing-card">
+        <h2>Pair with Remote</h2>
+        <div class="pairing-flex">
+            <form class="pairing-form" method="post" action="">
+                <input type="text" name="ip_address" placeholder="IP Address" required>
+                <input type="number" name="port" placeholder="Port" required>
+                <input type="text" name="pin" placeholder="Verification PIN" required>
+                <button type="submit">Start Pairing</button>
+            </form>
+            <div class="pairing-info">
+                <h3>Your Pairing Info</h3>
+                <p><b>IP:</b> {{ my_ip }}</p>
+                <p><b>Port:</b> {{ my_port }}</p>
+                <p><b>PIN:</b> {{ my_pin }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="connection-logs">
+        {% for log in connection_logs %}
+            {{ log }}<br>
+        {% endfor %}
     </div>
 </div>
-<div class="connection-logs">
-    {% for log in connection_logs %}
-        {{ log }}<br>
-    {% endfor %}
 </div>
 <script>
 function addListItem(listId, namePrefix) {
