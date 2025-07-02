@@ -131,11 +131,11 @@ class serverEventsHandler():
         
     def on_is_PIN_correct(self,data):
         msg=data.get('msg')
-        p=generateExponent(PRIME_GENERATING_LIMIT,True)
+        p=generateExponent(KEY_GENERATING_LIMIT,True)
         self.sid_dict_client[self.sio.sid].p=p
         secret_nr=generateExponent(p,False)
         self.sid_dict_client[self.sio.sid].secret_nr=secret_nr
-        key=generateExponent(KEY_GENERATING_LIMIT,True)
+        key=generateExponent(KEY_GENERATING_LIMIT,False)
         self.sid_dict_client[self.sio.sid].key=key
         number=modularExponentation(key,secret_nr,p)
         self.sio.emit('estabilish_secret_start',{'coded_nr': str(number), 'p':str(p)})

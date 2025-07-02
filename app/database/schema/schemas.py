@@ -40,7 +40,7 @@ class RemoteSchema(Schema):
     Id = fields.Int(dump_only=True)
     address = fields.Str(required=True)
     port = fields.Int(required=True)
-    # secret = fields.Str(required=True)
+    secret = fields.Str(required=True)
     # name = fields.Str()
     # mirrors = fields.Nested('DocumentMirrorSchema', many=True, dump_only=True)
 
