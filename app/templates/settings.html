@@ -87,28 +87,24 @@ function removeListItem(btn) {
     btn.parentElement.remove();
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    const btn = document.getElementById('start-listening-btn');
-    if (btn) {
-        btn.addEventListener('click', function() {
-            fetch('{{ url_for("bp_pairing.startServer") }}')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('pairing-info-section').innerHTML = `
-                        <div class="pairing-info">
-                            <h3>Your Pairing Info</h3>
-                            <p><b>IP:</b> ${data.my_ip}</p>
-                            <p><b>Port:</b> ${data.my_port}</p>
-                            <p><b>PIN:</b> ${data.my_pin}</p>
-                            <form  method="post" action="{{ url_for('bp_pairing.stopServer') }}">
-                                <button class="stop-listening-btn" type="submit" id="stop-listening-btn">Stop Listening</button>
-                            <form>
-                        </div>
-                    `;
-                });
+$(document).ready(function() {
+    $('#start-listening-btn').on('click', function() {
+        $.getJSON('{{ url_for("bp_pairing.startServer") }}', function(data) {
+            $('#pairing-info-section').html(`
+                <div class="pairing-info">
+                    <h3>Your Pairing Info</h3>
+                    <p><b>IP:</b> ${data.my_ip}</p>
+                    <p><b>Port:</b> ${data.my_port}</p>
+                    <p><b>PIN:</b> ${data.my_pin}</p>
+                    <form method="post" action="{{ url_for('bp_pairing.stopServer') }}">
+                        <button class="stop-listening-btn" type="submit" id="stop-listening-btn">Stop Listening</button>
+                    </form>
+                </div>
+            `);
         });
-    }
+    });
 });
+
 
 </script>
 {% endblock %}

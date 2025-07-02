@@ -55,21 +55,21 @@ def startPairing():
     pin=request.form['pin']
     
     if not validateIp(ip):
-        flash("Wrong IP address format given")
+        flash("Wrong IP address format given","error")
         return redirect(url_for('bp_client.settings'))
     if not port.isdigit() or not (1024 <= int(port) <= 65535):
-        flash("Port must be a number between 1024 and 65535")
+        flash("Port must be a number between 1024 and 65535", "error")
         return redirect(url_for('bp_client.settings'))
     if not re.match(r"^\d{6}$", pin):
-        flash("PIN must be a 6-digit number")
+        flash("PIN must be a 6-digit number","error")
         return redirect(url_for('bp_client.settings'))
     
     if not checkIfHostUp(ip,port):
-        flash("Host you are trying to connect is busy. Try again later.")
+        flash("Host you are trying to connect is busy. Try again later.","warning")
         return redirect(url_for('bp_client.settings'))
     
     getSocketServer().initilaizeConnection(ip,port,pin)
-    flash("Pairing started successfully")
+    flash("Pairing started successfully",'info')
     return redirect(url_for('bp_client.settings'))
 
 @bp.route(START_SERVER_ENDPOINT, methods=['GET'])
@@ -78,6 +78,7 @@ def startServer():
     getSocketServer().run('0.0.0.0', port)
     import time
     time.sleep(0.25)
+    flash("Server started successfully","info")
     my_ip = socket.gethostbyname_ex(socket.gethostname())[-1]
     my_port = port
     my_pin = pin_class_instance.get_pin()
@@ -91,4 +92,5 @@ def stopServer():
     socketServer = getSocketServer()
     del socketServer
     session.pop('pairing_info',None)
+    flash("Server stopped successfully", "info")
     return redirect(url_for('bp_client.settings'))

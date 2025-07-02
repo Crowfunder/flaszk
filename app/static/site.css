@@ -1,3 +1,7 @@
+html, body {
+    overflow-x: hidden;
+}
+
 .navbar {
     background-color: #444;
     color: #fff;
@@ -57,7 +61,7 @@
 .index-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 30px;
+    gap: 20px;
     justify-content: flex-start;
 }
 
@@ -231,6 +235,11 @@
 .pairing-card,
 .connection-logs,
 .vertical-flex {
+    box-sizing: border-box;
+}
+
+* {
+    min-width: 0;
     box-sizing: border-box;
 }
 
