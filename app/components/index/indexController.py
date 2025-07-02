@@ -16,6 +16,8 @@ bp = Blueprint('bp_index', __name__)
 def clientIndexing():
     startIndexing()
     flash("Finished indexing", 'message')
+    if not request.referrer:
+        return 'ok'
     return redirect(request.referrer)
 
 @bp.route(CLIENT_PRUNE_ENDPOINT, methods=['GET'])

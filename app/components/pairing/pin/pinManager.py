@@ -8,7 +8,7 @@ class PinManager:
     Service offering server-side otp pins with token regenerated with each restart
     '''
     def __init__(self):
-        self.hotp = pyotp.HOTP('base32secret3232')
+        self.hotp = pyotp.HOTP(pyotp.random_base32())
         # self.counter = randint(PIN_COUNTER_THERSHOLD,PIN_COUNTER_LIMIT)
         # self.used_pin = ''
 

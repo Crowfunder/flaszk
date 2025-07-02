@@ -20,6 +20,8 @@ bp = Blueprint('bp_sync', __name__)
 def clientSyncAll():
     syncWithAll()
     flash("Finished syncing", 'info')
+    if not request.referrer:
+        return 'ok'
     return redirect(request.referrer)
 
 
