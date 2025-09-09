@@ -23,7 +23,7 @@ Let’s walk through all the features, in the order they’re used while setting
   - **Start Pairing** button  
 - The next step is to generate a PIN on the device with the indexed files, and enter that PIN on the device you wish to synchronize.  
 - To securely pair devices, a secret is exchanged — later used during synchronization.  
-  To achieve this securely, we’ve implemented the [Three-pass protocol](https://en.wikipedia.org/wiki/Three-pass_protocol).
+  To achieve this securely, we’ve implemented the [Three-pass protocol](https://en.wikipedia.org/wiki/Three-pass_protocol) using sockets.
 
 ---
 
